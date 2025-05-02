@@ -557,7 +557,13 @@ export default function MainDashboard({ selectedState, onStateChange }: MainDash
                   type: "funnel",
                   y: labels,
                   x: values,
-                  textinfo: "none",
+                  textinfo: "percent initial",
+                  textfont: {
+                    family: "Poppins, sans-serif",
+                    size: 14,
+                    color: "black",
+                    weight: "bold"
+                  },
                   marker: {
                     color: [
                       "rgba(152, 251, 152, 0.8)", // Light green
@@ -593,13 +599,14 @@ export default function MainDashboard({ selectedState, onStateChange }: MainDash
                   showgrid: false,
                   zeroline: false,
                 },
+                
               }}
               config={{ responsive: true, displayModeBar: false }}
               style={{ width: "100%", height: "100%" }}
             />
           </div>
+          <br />
           <div className="mt-2 text-xs text-center text-gray-400">
-            Call flow analysis showing conversion through each stage of the process
           </div>
         </ChartCard>
       </div>

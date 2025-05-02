@@ -90,7 +90,7 @@ export async function fetchCountryData() {
  */
 export async function fetchStateData() {
   try {
-    const response = await fetch("/data/state_calls.json")
+    const response = await fetch("http://localhost:8000/static/states.json")
     if (!response.ok) {
       throw new Error("Failed to fetch state data")
     }
@@ -100,8 +100,8 @@ export async function fetchStateData() {
     // Return dummy data for demonstration
     return [
       {
-        state: "CA",
-        totalCalls: 2100,
+        state: "IN",
+        totalCalls: 2200,
         byGender: { Male: 1200, Female: 900 },
         timeseries: [
           { date: "2025-01-01", calls: 50 },
@@ -308,7 +308,7 @@ export async function fetchStateData() {
  */
 export async function fetchQuestionCountryData(questionId: number) {
   try {
-    const response = await fetch(`/data/question${questionId}_country.json`)
+    const response = await fetch(`http://localhost:8000/static/question${questionId}_country.json`)
     if (!response.ok) {
       throw new Error(`Failed to fetch country data for question ${questionId}`)
     }
@@ -417,7 +417,7 @@ export async function fetchQuestionCountryData(questionId: number) {
  */
 export async function fetchQuestionStateData(questionId: number, state: string) {
   try {
-    const response = await fetch(`/data/question${questionId}_state.json`)
+    const response = await fetch(`http://localhost:8000/static/question${questionId}_state.json`)
     if (!response.ok) {
       throw new Error(`Failed to fetch state data for question ${questionId}`)
     }
@@ -526,3 +526,28 @@ export async function fetchQuestionStateData(questionId: number, state: string) 
     }
   }
 }
+
+/*
+* Fetch NLP query results
+*/
+// export async function fetchNLPResults(query: string) {
+//  try {
+//    const response = await fetch("http://localhost:8000/static/nlp.json")
+//    if (!response.ok) {
+//     throw new Error("Failed to fetch state data")
+//   }
+//    return response.json()
+//  } catch (error) {
+//    console.error("Error fetching NLP results:", error)
+//    // Return dummy data as fallback
+//    return {
+//      chartType: "bar",
+//      title: "Sample Query Results",
+//      description: "This is a sample result for demonstration purposes.",
+//      data: {
+//        labels: ["Category A", "Category B", "Category C", "Category D", "Category E"],
+//        values: [120, 150, 200, 180, 90],
+//      },
+//    }
+//  }
+// }
