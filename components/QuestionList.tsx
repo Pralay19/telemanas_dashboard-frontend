@@ -5,7 +5,7 @@ interface QuestionListProps {
 }
 
 export default function QuestionList({ onQuestionSelect }: QuestionListProps) {
-  // Sample questions - in a real app, these would come from an API or data file
+  
   const questions = [
     {
       id: 1,

@@ -1,10 +1,4 @@
-// Simple fetch wrappers for API calls
 
-/**
- * Fetch country-level call data
- * [REPLACE WITH YOUR DATA HERE]
- * Expected JSON shape matches the country_calls.json format
- */
 export async function fetchCountryData() {
   try {
     const response = await fetch("/data/country_calls.json")
@@ -83,11 +77,7 @@ export async function fetchCountryData() {
   }
 }
 
-/**
- * Fetch state-level call data
- * [REPLACE WITH YOUR DATA HERE]
- * Expected JSON shape matches the state_calls.json format
- */
+
 export async function fetchStateData() {
   try {
     const response = await fetch("http://localhost:8000/static/states.json")
@@ -166,7 +156,7 @@ export async function fetchStateData() {
         },
       },
       {
-        state: "NY",
+        state: "DEL",
         totalCalls: 1800,
         byGender: { Male: 1000, Female: 800 },
         timeseries: [
@@ -232,7 +222,7 @@ export async function fetchStateData() {
         },
       },
       {
-        state: "TX",
+        state: "MH",
         totalCalls: 1600,
         byGender: { Male: 900, Female: 700 },
         timeseries: [
@@ -301,11 +291,7 @@ export async function fetchStateData() {
   }
 }
 
-/**
- * Fetch question data for country level
- * [REPLACE WITH YOUR DATA HERE]
- * Expected JSON shape varies by question type
- */
+
 export async function fetchQuestionCountryData(questionId: number) {
   try {
     const response = await fetch(`http://localhost:8000/static/question${questionId}_country.json`)
@@ -410,11 +396,7 @@ export async function fetchQuestionCountryData(questionId: number) {
   }
 }
 
-/**
- * Fetch question data for state level
- * [REPLACE WITH YOUR DATA HERE]
- * Expected JSON shape varies by question type
- */
+
 export async function fetchQuestionStateData(questionId: number, state: string) {
   try {
     const response = await fetch(`http://localhost:8000/static/question${questionId}_state.json`)

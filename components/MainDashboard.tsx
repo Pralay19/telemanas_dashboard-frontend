@@ -524,7 +524,7 @@ export default function MainDashboard({ selectedState, onStateChange }: MainDash
       {/* Row 5: Call Flow Funnel Chart (full width) */}
       <div className="grid grid-cols-1 gap-6">
         <ChartCard title="Call Flow Funnel" className="col-span-1">
-          <div className="h-96">
+          <div className="h-98">
             {/* Header with date range */}
             <div className="text-xs text-gray-400 mb-4">Jan 1, 2023 - Jun 30, 2023</div>
 
