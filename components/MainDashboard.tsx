@@ -8,6 +8,7 @@ import { fetchCountryData, fetchStateData } from "@/utils/api"
 // import Plot from "react-plotly.js"
 
 import dynamic from 'next/dynamic';
+import { Weight } from "lucide-react"
 
 const Plot = dynamic(() => import('react-plotly.js'), { ssr: false });
 
@@ -70,7 +71,7 @@ export default function MainDashboard({ selectedState, onStateChange }: MainDash
         setStates(statesList)
 
         // Find the selected state data
-        const selectedStateData = stateDataResult.find((state: StateData) => state.state === selectedState) || "IN"
+        const selectedStateData = stateDataResult.find((state: StateData) => state.state === selectedState) || "India"
         setStateData(selectedStateData || null)
       } catch (error) {
         console.error("Error loading dashboard data:", error)
@@ -422,10 +423,11 @@ export default function MainDashboard({ selectedState, onStateChange }: MainDash
                       color: "#374151",
                     },
                   },
+                  textfont: {weight: "bold"},
                   name: "Calls by Age Group",
                   text: ageGroupValues.map(String),
                   textposition: "auto",
-                  hoverinfo: "x+y",
+                  hoverinfo: "",
                 },
               ]}
               layout={{

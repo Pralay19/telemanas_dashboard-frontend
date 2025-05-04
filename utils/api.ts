@@ -80,7 +80,8 @@ export async function fetchCountryData() {
 
 export async function fetchStateData() {
   try {
-    const response = await fetch("http://localhost:8000/static/states.json")
+    // const response = await fetch("http://localhost:8000/static/states.json")
+    const response = await fetch("/data/state_calls.json")
     if (!response.ok) {
       throw new Error("Failed to fetch state data")
     }
@@ -90,7 +91,7 @@ export async function fetchStateData() {
     // Return dummy data for demonstration
     return [
       {
-        state: "IN",
+        state: "India",
         totalCalls: 2200,
         byGender: { Male: 1200, Female: 900 },
         timeseries: [
@@ -156,7 +157,7 @@ export async function fetchStateData() {
         },
       },
       {
-        state: "DEL",
+        state: "Maharashtra",
         totalCalls: 1800,
         byGender: { Male: 1000, Female: 800 },
         timeseries: [
@@ -222,7 +223,7 @@ export async function fetchStateData() {
         },
       },
       {
-        state: "MH",
+        state: "Karnataka",
         totalCalls: 1600,
         byGender: { Male: 900, Female: 700 },
         timeseries: [
@@ -294,7 +295,8 @@ export async function fetchStateData() {
 
 export async function fetchQuestionCountryData(questionId: number) {
   try {
-    const response = await fetch(`http://localhost:8000/static/question${questionId}_country.json`)
+    // const response = await fetch(`http://localhost:8000/static/question${questionId}_country.json`)
+    const response = await fetch(`/data/question${questionId}_country.json`)
     if (!response.ok) {
       throw new Error(`Failed to fetch country data for question ${questionId}`)
     }
@@ -313,11 +315,9 @@ export async function fetchQuestionCountryData(questionId: number) {
           labels: ["Morning", "Afternoon", "Evening", "Night"],
           values: [250, 350, 400, 200],
         }
-      case 3: // Scatter plot
+      case 3: // Repeated callers plot
         return {
-          x: [2, 3, 4, 5, 6, 7, 8, 9, 10],
-          y: [60, 65, 70, 75, 80, 85, 90, 88, 85],
-          text: ["Cat A", "Cat B", "Cat C", "Cat D", "Cat E", "Cat F", "Cat G", "Cat H", "Cat I"],
+          
         }
       case 4: // Sankey diagram
         return {
@@ -328,19 +328,82 @@ export async function fetchQuestionCountryData(questionId: number) {
         }
       case 5: // Choropleth map
         return {
-          locations: ["CA", "NY", "TX", "FL", "IL", "PA", "OH", "GA", "NC", "MI"],
+          locations: [
+            "Karnataka",
+            "Tripura",
+            "Telangana",
+            "Bihar",
+            "Haryana",
+            "Kerala",
+            "Assam",
+            "Chhattisgarh",
+            "Punjab",
+            "Goa",
+            "Manipur",
+            "Delhi",
+            "Gujarat",
+            "Mizoram",
+            "Uttarakhand",
+            "Ladakh",
+            "Meghalaya",
+            "Arunachal_Pradesh",
+            "Nagaland",
+            "Sikkim",
+            "Uttar_Pradesh",
+            "Odisha",
+            "Jammu_Kashmir",
+            "Tamil_Nadu",
+            "Maharashtra",
+            "Madhya_Pradesh",
+            "West_Bengal",
+            "Jharkhand",
+            "Andhra_Pradesh",
+            "Rajasthan",
+            "Pondicherry",
+            "Chandigarh",
+            "Himachal_Pradesh",
+            "Dadra_Daman_Diu",
+            "Andaman_Nicobar",
+            "Lakshadweep"
+          ],
           values: [2100, 1800, 1600, 1400, 1200, 1000, 900, 800, 700, 600],
           text: [
-            "California",
-            "New York",
-            "Texas",
-            "Florida",
-            "Illinois",
-            "Pennsylvania",
-            "Ohio",
-            "Georgia",
-            "North Carolina",
-            "Michigan",
+            "Karnataka",
+            "Tripura",
+            "Telangana",
+            "Bihar",
+            "Haryana",
+            "Kerala",
+            "Assam",
+            "Chhattisgarh",
+            "Punjab",
+            "Goa",
+            "Manipur",
+            "Delhi",
+            "Gujarat",
+            "Mizoram",
+            "Uttarakhand",
+            "Ladakh",
+            "Meghalaya",
+            "Arunachal_Pradesh",
+            "Nagaland",
+            "Sikkim",
+            "Uttar_Pradesh",
+            "Odisha",
+            "Jammu_Kashmir",
+            "Tamil_Nadu",
+            "Maharashtra",
+            "Madhya_Pradesh",
+            "West_Bengal",
+            "Jharkhand",
+            "Andhra_Pradesh",
+            "Rajasthan",
+            "Pondicherry",
+            "Chandigarh",
+            "Himachal_Pradesh",
+            "Dadra_Daman_Diu",
+            "Andaman_Nicobar",
+            "Lakshadweep"
           ],
         }
       // Add new chart types
@@ -390,6 +453,81 @@ export async function fetchQuestionCountryData(questionId: number) {
           stress: [200, 210, 220, 230, 240, 250],
           other: [100, 105, 110, 115, 120, 125],
         }
+        case 11: // Complex Sankey
+        return {
+          nodes: [
+            "Male",
+            "Female",
+            "Transgender",
+            "Prefer Not To Say",
+            "Other Gender",
+            "Adults",
+            "Children",
+            "Elders",
+            "Patient",
+            "Caregiver",
+            "Health Care Worker",
+            "Others",
+          ],
+          source: [0, 0, 0, 1, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7],
+          target: [5, 6, 7, 5, 6, 7, 5, 7, 5, 7, 5, 7, 8, 9, 10, 8, 9, 11, 8, 9, 10],
+          value: [
+            70000, 10000, 5000, 50000, 8000, 3000, 15, 4, 1200, 300, 200, 28, 90000, 25000, 5000, 15000, 2000, 1000,
+            6000, 2000, 300,
+          ],
+          nodeColors: [
+            "#4f83cc",
+            "#3498db",
+            "#9b59b6",
+            "#95a5a6",
+            "#34495e",
+            "#2ecc71",
+            "#e74c3c",
+            "#f1c40f",
+            "#e67e22",
+            "#8e44ad",
+            "#16a085",
+            "#7f8c8d",
+          ],
+        }
+      case 12: // Violin chart
+        return {
+          months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+          male: {
+            min: [1500, 1800, 2000, 2200, 2400, 2500, 2600, 2500, 2400, 2300, 2100, 1900],
+            q1: [2000, 2200, 2400, 2600, 2800, 2900, 3000, 2900, 2800, 2700, 2500, 2300],
+            median: [2500, 2700, 2900, 3100, 3300, 3400, 3500, 3400, 3300, 3200, 3000, 2800],
+            q3: [3000, 3200, 3400, 3600, 3800, 3900, 4000, 3900, 3800, 3700, 3500, 3300],
+            max: [3500, 3700, 3900, 4100, 4300, 4400, 4500, 4400, 4300, 4200, 4000, 3800],
+          },
+          female: {
+            min: [1700, 2000, 2200, 2400, 2600, 2700, 2800, 2700, 2600, 2500, 2300, 2100],
+            q1: [2200, 2400, 2600, 2800, 3000, 3100, 3200, 3100, 3000, 2900, 2700, 2500],
+            median: [2700, 2900, 3100, 3300, 3500, 3600, 3700, 3600, 3500, 3400, 3200, 3000],
+            q3: [3200, 3400, 3600, 3800, 4000, 4100, 4200, 4100, 4000, 3900, 3700, 3500],
+            max: [3700, 3900, 4100, 4300, 4500, 4600, 4700, 4600, 4500, 4400, 4200, 4000],
+          },
+        }
+      case 13: // Calendar chart
+        return {
+          year: 2024,
+          months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+          days: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+          values: [
+            [2500, 2600, 2700, 2800, 2900, 3000, 1800],
+            [2600, 2700, 2800, 2900, 3000, 1900, 1700],
+            [2700, 2800, 2900, 3000, 3100, 2000, 1600],
+            [2800, 2900, 3000, 3100, 3200, 2100, 1500],
+            [2900, 3000, 3100, 3200, 3300, 2200, 1400],
+            [3000, 3100, 3200, 3300, 3400, 2300, 1300],
+            [3100, 3200, 3300, 3400, 3500, 2400, 1200],
+            [3000, 3100, 3200, 3300, 3400, 2300, 1300],
+            [2900, 3000, 3100, 3200, 3300, 2200, 1400],
+            [2800, 2900, 3000, 3100, 3200, 2100, 1500],
+            [2700, 2800, 2900, 3000, 3100, 2000, 1600],
+            [2600, 2700, 2800, 2900, 3000, 1900, 1700],
+          ],
+        }
       default:
         return null
     }
@@ -399,11 +537,13 @@ export async function fetchQuestionCountryData(questionId: number) {
 
 export async function fetchQuestionStateData(questionId: number, state: string) {
   try {
-    const response = await fetch(`http://localhost:8000/static/question${questionId}_state.json`)
+    // const response = await fetch(`http://localhost:8000/static/question${questionId}_state.json`)
+    const response = await fetch(`/data/question${questionId}_state.json`);
     if (!response.ok) {
       throw new Error(`Failed to fetch state data for question ${questionId}`)
     }
     const data = await response.json()
+    console.log("Response:", data)
     // Filter by state if the data contains multiple states
     return data.state === state ? data : data
   } catch (error) {
@@ -411,72 +551,188 @@ export async function fetchQuestionStateData(questionId: number, state: string) 
     // Return dummy data based on question type
     switch (questionId) {
       case 1: // Pie chart
-        return {
-          state: "CA",
-          labels: ["Anxiety", "Depression", "Stress", "Other"],
-          values: [120, 90, 60, 30],
-        }
+      return {
+        states: ["Karnataka", "Maharashtra", "Delhi"],
+        values: [
+          [3, 40, 50],
+          [2, 35, 45],
+          [7, 30, 40],
+        ],
+        labels: ["Category 1", "Category 2", "Category 3"],
+      }
       case 2: // Bar chart
         return {
-          state: "CA",
+          states: ["Karnataka", "Maharashtra", "Tamil Nadu"],
           labels: ["Morning", "Afternoon", "Evening", "Night"],
-          values: [50, 70, 80, 40],
+          values: [
+            [50, 70, 80, 40],
+            [60, 80, 90, 50],
+            [40, 60, 70, 30],
+          ],
         }
       case 3: // Scatter plot
         return {
-          state: "CA",
+          states: ["Karnataka", "Maharashtra", "Tamil Nadu"],
           x: [2, 3, 4, 5, 6, 7, 8, 9, 10],
           y: [55, 60, 65, 70, 75, 80, 85, 83, 80],
           text: ["Cat A", "Cat B", "Cat C", "Cat D", "Cat E", "Cat F", "Cat G", "Cat H", "Cat I"],
         }
       case 4: // Sankey diagram
         return {
-          state: "CA",
+          states: ["Karnataka", "Maharashtra", "Tamil Nadu"],
           nodes: ["Anxiety", "Depression", "Stress", "Reopened", "Resolved"],
-          source: [0, 0, 1, 1, 2, 2],
-          target: [3, 4, 3, 4, 3, 4],
-          value: [15, 85, 25, 75, 5, 95],
+          sources: [
+            [0, 0, 1, 1, 2, 2],
+            [0, 0, 1, 1, 2, 2],
+            [0, 0, 1, 1, 2, 2],
+          ],
+          targets: [
+            [3, 4, 3, 4, 3, 4],
+            [3, 4, 3, 4, 3, 4],
+            [3, 4, 3, 4, 3, 4],
+          ],
+          values: [
+            [15, 85, 25, 75, 5, 95],
+            [20, 80, 30, 70, 10, 90],
+            [10, 90, 20, 80, 5, 95],
+          ],
         }
       case 5: // Choropleth map - not applicable for state level, so we'll return counties
         return {
-          state: "CA",
-          locations: ["Los Angeles", "San Diego", "Orange", "Riverside", "San Bernardino"],
+          state: "",
+          locations: [
+            "Karnataka",
+            "Tripura",
+            "Telangana",
+            "Bihar",
+            "Haryana",
+            "Kerala",
+            "Assam",
+            "Chhattisgarh",
+            "Punjab",
+            "Goa",
+            "Manipur",
+            "Delhi",
+            "Gujarat",
+            "Mizoram",
+            "Uttarakhand",
+            "Ladakh",
+            "Meghalaya",
+            "Arunachal_Pradesh",
+            "Nagaland",
+            "Sikkim",
+            "Uttar_Pradesh",
+            "Odisha",
+            "Jammu_Kashmir",
+            "Tamil_Nadu",
+            "Maharashtra",
+            "Madhya_Pradesh",
+            "West_Bengal",
+            "Jharkhand",
+            "Andhra_Pradesh",
+            "Rajasthan",
+            "Pondicherry",
+            "Chandigarh",
+            "Himachal_Pradesh",
+            "Dadra_Daman_Diu",
+            "Andaman_Nicobar",
+            "Lakshadweep"
+          ],
           values: [500, 400, 300, 250, 200],
           text: [
-            "Los Angeles County",
-            "San Diego County",
-            "Orange County",
-            "Riverside County",
-            "San Bernardino County",
+            "Karnataka",
+            "Tripura",
+            "Telangana",
+            "Bihar",
+            "Haryana",
+            "Kerala",
+            "Assam",
+            "Chhattisgarh",
+            "Punjab",
+            "Goa",
+            "Manipur",
+            "Delhi",
+            "Gujarat",
+            "Mizoram",
+            "Uttarakhand",
+            "Ladakh",
+            "Meghalaya",
+            "Arunachal_Pradesh",
+            "Nagaland",
+            "Sikkim",
+            "Uttar_Pradesh",
+            "Odisha",
+            "Jammu_Kashmir",
+            "Tamil_Nadu",
+            "Maharashtra",
+            "Madhya_Pradesh",
+            "West_Bengal",
+            "Jharkhand",
+            "Andhra_Pradesh",
+            "Rajasthan",
+            "Pondicherry",
+            "Chandigarh",
+            "Himachal_Pradesh",
+            "Dadra_Daman_Diu",
+            "Andaman_Nicobar",
+            "Lakshadweep"
           ],
         }
       // Add new chart types
       case 6: // Line chart
         return {
-          state: "CA",
+          states: ["Karnataka", "Maharashtra", "Tamil Nadu"],
           x: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"],
-          y1: [35, 40, 45, 50, 55, 60, 65, 70, 65, 70],
-          y2: [30, 35, 40, 45, 50, 55, 60, 55, 50, 55],
+          y1_values: [
+            [35, 40, 45, 50, 55, 60, 65, 70, 65, 70],
+            [40, 45, 50, 55, 60, 65, 70, 75, 70, 75],
+            [30, 35, 40, 45, 50, 55, 60, 65, 60, 65],
+          ],
+          y2_values: [
+            [30, 35, 40, 45, 50, 55, 60, 55, 50, 55],
+            [35, 40, 45, 50, 55, 60, 65, 60, 55, 60],
+            [25, 30, 35, 40, 45, 50, 55, 50, 45, 50],
+          ],
           labels: ["Call Volume", "Resolution Rate"],
         }
       case 7: // Heatmap
         return {
-          state: "CA",
+          states: ["Karnataka", "Maharashtra", "Tamil Nadu"],
           x: ["12am", "4am", "8am", "12pm", "4pm", "8pm"],
           y: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-          z: [
-            [0, 1, 3, 4, 2, 1],
-            [1, 2, 4, 5, 3, 2],
-            [2, 3, 5, 6, 4, 3],
-            [1, 2, 4, 5, 3, 2],
-            [0, 1, 3, 4, 2, 1],
-            [0, 0, 2, 3, 1, 0],
-            [0, 0, 1, 2, 1, 0],
+          z_values: [
+            [
+              [0, 1, 3, 4, 2, 1],
+              [1, 2, 4, 5, 3, 2],
+              [2, 3, 5, 6, 4, 3],
+              [1, 2, 4, 5, 3, 2],
+              [0, 1, 3, 4, 2, 1],
+              [0, 0, 2, 3, 1, 0],
+              [0, 0, 1, 2, 1, 0],
+            ],
+            [
+              [1, 2, 4, 5, 3, 2],
+              [2, 3, 5, 6, 4, 3],
+              [3, 4, 6, 7, 5, 4],
+              [2, 3, 5, 6, 4, 3],
+              [1, 2, 4, 5, 3, 2],
+              [1, 1, 3, 4, 2, 1],
+              [1, 1, 2, 3, 2, 1],
+            ],
+            [
+              [0, 1, 2, 3, 1, 0],
+              [1, 2, 3, 4, 2, 1],
+              [2, 3, 4, 5, 3, 2],
+              [1, 2, 3, 4, 2, 1],
+              [0, 1, 2, 3, 1, 0],
+              [0, 0, 1, 2, 0, 0],
+              [0, 0, 0, 1, 0, 0],
+            ],
           ],
         }
       case 8: // Radar chart
         return {
-          state: "CA",
+          state: "Karnataka",
           categories: ["Call Volume", "Avg Duration", "Resolution Rate", "Customer Satisfaction", "Agent Performance"],
           regions: ["North", "South", "East", "West"],
           values: [
@@ -488,20 +744,305 @@ export async function fetchQuestionStateData(questionId: number, state: string) 
         }
       case 9: // Bubble chart
         return {
-          state: "CA",
-          x: [200, 300, 400, 500, 600], // Call volume by region
-          y: [2.0, 2.5, 3.0, 3.5, 4.0], // Avg duration
-          size: [65, 75, 70, 80, 85], // Resolution rate
-          text: ["North", "South", "East", "West", "Central"],
+          states: ["Karnataka", "Maharashtra", "Tamil Nadu"],
+          x_values: [
+            [200, 300, 400, 500, 600], // Karnataka
+            [250, 350, 450, 550, 650], // Maharashtra
+            [150, 250, 350, 450, 550], // Tamil Nadu
+          ],
+          y_values: [
+            [2.0, 2.5, 3.0, 3.5, 4.0], // Karnataka
+            [2.2, 2.7, 3.2, 3.7, 4.2], // Maharashtra
+            [1.8, 2.3, 2.8, 3.3, 3.8], // Tamil Nadu
+          ],
+          size_values: [
+            [65, 75, 70, 80, 85], // Karnataka
+            [70, 80, 75, 85, 90], // Maharashtra
+            [60, 70, 65, 75, 80], // Tamil Nadu
+          ],
+          text_values: [
+            ["North", "South", "East", "West", "Central"], // Karnataka
+            ["Mumbai", "Pune", "Nagpur", "Thane", "Nashik"], // Maharashtra
+            ["Chennai", "Coimbatore", "Madurai", "Tiruchirappalli", "Salem"], // Tamil Nadu
+          ],
         }
       case 10: // Area chart
         return {
-          state: "CA",
+          states: ["Karnataka", "Maharashtra", "Tamil Nadu"],
           x: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-          anxiety: [120, 130, 140, 150, 160, 170],
-          depression: [90, 95, 100, 105, 110, 115],
-          stress: [60, 65, 70, 75, 80, 85],
-          other: [30, 32, 34, 36, 38, 40],
+          anxiety_values: [
+            [120, 130, 140, 150, 160, 170], // Karnataka
+            [140, 150, 160, 170, 180, 190], // Maharashtra
+            [100, 110, 120, 130, 140, 150], // Tamil Nadu
+          ],
+          depression_values: [
+            [90, 95, 100, 105, 110, 115], // Karnataka
+            [100, 105, 110, 115, 120, 125], // Maharashtra
+            [80, 85, 90, 95, 100, 105], // Tamil Nadu
+          ],
+          stress_values: [
+            [60, 65, 70, 75, 80, 85], // Karnataka
+            [70, 75, 80, 85, 90, 95], // Maharashtra
+            [50, 55, 60, 65, 70, 75], // Tamil Nadu
+          ],
+          other_values: [
+            [30, 32, 34, 36, 38, 40], // Karnataka
+            [35, 37, 39, 41, 43, 45], // Maharashtra
+            [25, 27, 29, 31, 33, 35], // Tamil Nadu
+          ],
+        }
+        case 11: // Complex Sankey
+        return {
+          nodes: [
+            "Male",
+            "Female",
+            "Transgender",
+            "Prefer Not To Say",
+            "Other Gender",
+            "Adults",
+            "Children",
+            "Elders",
+            "Patient",
+            "Caregiver",
+            "Health Care Worker",
+            "Others",
+          ],
+          source: [0, 0, 0, 1, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7],
+          target: [5, 6, 7, 5, 6, 7, 5, 7, 5, 7, 5, 7, 8, 9, 10, 8, 9, 11, 8, 9, 10],
+          value: [
+            70000, 10000, 5000, 50000, 8000, 3000, 15, 4, 1200, 300, 200, 28, 90000, 25000, 5000, 15000, 2000, 1000,
+            6000, 2000, 300,
+          ],
+          nodeColors: [
+            "#4f83cc",
+            "#3498db",
+            "#9b59b6",
+            "#95a5a6",
+            "#34495e",
+            "#2ecc71",
+            "#e74c3c",
+            "#f1c40f",
+            "#e67e22",
+            "#8e44ad",
+            "#16a085",
+            "#7f8c8d",
+          ],
+        }
+      case 12: // Violin chart
+        return {
+          months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+          male: {
+            min: [1500, 1800, 2000, 2200, 2400, 2500, 2600, 2500, 2400, 2300, 2100, 1900],
+            q1: [2000, 2200, 2400, 2600, 2800, 2900, 3000, 2900, 2800, 2700, 2500, 2300],
+            median: [2500, 2700, 2900, 3100, 3300, 3400, 3500, 3400, 3300, 3200, 3000, 2800],
+            q3: [3000, 3200, 3400, 3600, 3800, 3900, 4000, 3900, 3800, 3700, 3500, 3300],
+            max: [3500, 3700, 3900, 4100, 4300, 4400, 4500, 4400, 4300, 4200, 4000, 3800],
+          },
+          female: {
+            min: [1700, 2000, 2200, 2400, 2600, 2700, 2800, 2700, 2600, 2500, 2300, 2100],
+            q1: [2200, 2400, 2600, 2800, 3000, 3100, 3200, 3100, 3000, 2900, 2700, 2500],
+            median: [2700, 2900, 3100, 3300, 3500, 3600, 3700, 3600, 3500, 3400, 3200, 3000],
+            q3: [3200, 3400, 3600, 3800, 4000, 4100, 4200, 4100, 4000, 3900, 3700, 3500],
+            max: [3700, 3900, 4100, 4300, 4500, 4600, 4700, 4600, 4500, 4400, 4200, 4000],
+          },
+        }
+      case 13: // Calendar chart
+        return {
+          year: 2024,
+          months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+          days: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+          values: [
+            [2500, 2600, 2700, 2800, 2900, 3000, 1800],
+            [2600, 2700, 2800, 2900, 3000, 1900, 1700],
+            [2700, 2800, 2900, 3000, 3100, 2000, 1600],
+            [2800, 2900, 3000, 3100, 3200, 2100, 1500],
+            [2900, 3000, 3100, 3200, 3300, 2200, 1400],
+            [3000, 3100, 3200, 3300, 3400, 2300, 1300],
+            [3100, 3200, 3300, 3400, 3500, 2400, 1200],
+            [3000, 3100, 3200, 3300, 3400, 2300, 1300],
+            [2900, 3000, 3100, 3200, 3300, 2200, 1400],
+            [2800, 2900, 3000, 3100, 3200, 2100, 1500],
+            [2700, 2800, 2900, 3000, 3100, 2000, 1600],
+            [2600, 2700, 2800, 2900, 3000, 1900, 1700],
+          ],
+        }
+
+        case 11: // Complex Sankey
+        return {
+          states: ["Karnataka", "Maharashtra", "Tamil Nadu"],
+          nodes: [
+            "Male",
+            "Female",
+            "Transgender",
+            "Prefer Not To Say",
+            "Other Gender",
+            "Adults",
+            "Children",
+            "Elders",
+            "Patient",
+            "Caregiver",
+            "Health Care Worker",
+            "Others",
+          ],
+          sources: [
+            [0, 0, 0, 1, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7],
+            [0, 0, 0, 1, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7],
+            [0, 0, 0, 1, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7],
+          ],
+          targets: [
+            [5, 6, 7, 5, 6, 7, 5, 7, 5, 7, 5, 7, 8, 9, 10, 8, 9, 11, 8, 9, 10],
+            [5, 6, 7, 5, 6, 7, 5, 7, 5, 7, 5, 7, 8, 9, 10, 8, 9, 11, 8, 9, 10],
+            [5, 6, 7, 5, 6, 7, 5, 7, 5, 7, 5, 7, 8, 9, 10, 8, 9, 11, 8, 9, 10],
+          ],
+          values: [
+            [
+              25000, 4000, 2000, 18000, 3000, 1000, 5, 2, 400, 100, 70, 10, 30000, 8000, 1500, 5000, 700, 300, 2000,
+              700, 100,
+            ],
+            [
+              30000, 5000, 2500, 22000, 3500, 1200, 7, 1, 500, 120, 80, 12, 35000, 10000, 2000, 6000, 800, 400, 2500,
+              800, 120,
+            ],
+            [
+              20000, 3000, 1500, 15000, 2500, 800, 3, 1, 300, 80, 50, 6, 25000, 7000, 1500, 4000, 500, 300, 1500, 500,
+              80,
+            ],
+          ],
+          nodeColors: [
+            "#4f83cc",
+            "#3498db",
+            "#9b59b6",
+            "#95a5a6",
+            "#34495e",
+            "#2ecc71",
+            "#e74c3c",
+            "#f1c40f",
+            "#e67e22",
+            "#8e44ad",
+            "#16a085",
+            "#7f8c8d",
+          ],
+        }
+      case 12: // Violin chart
+        return {
+          states: ["Karnataka", "Maharashtra", "Tamil Nadu"],
+          months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+          male: [
+            {
+              min: [800, 900, 1000, 1100, 1200, 1250, 1300, 1250, 1200, 1150, 1050, 950],
+              q1: [1000, 1100, 1200, 1300, 1400, 1450, 1500, 1450, 1400, 1350, 1250, 1150],
+              median: [1250, 1350, 1450, 1550, 1650, 1700, 1750, 1700, 1650, 1600, 1500, 1400],
+              q3: [1500, 1600, 1700, 1800, 1900, 1950, 2000, 1950, 1900, 1850, 1750, 1650],
+              max: [1750, 1850, 1950, 2050, 2150, 2200, 2250, 2200, 2150, 2100, 2000, 1900],
+            },
+            {
+              min: [1000, 1100, 1200, 1300, 1400, 1450, 1500, 1450, 1400, 1350, 1250, 1150],
+              q1: [1200, 1300, 1400, 1500, 1600, 1650, 1700, 1650, 1600, 1550, 1450, 1350],
+              median: [1450, 1550, 1650, 1750, 1850, 1900, 1950, 1900, 1850, 1800, 1700, 1600],
+              q3: [1700, 1800, 1900, 2000, 2100, 2150, 2200, 2150, 2100, 2050, 1950, 1850],
+              max: [1950, 2050, 2150, 2250, 2350, 2400, 2450, 2400, 2350, 2300, 2200, 2100],
+            },
+            {
+              min: [700, 800, 900, 1000, 1100, 1150, 1200, 1150, 1100, 1050, 950, 850],
+              q1: [900, 1000, 1100, 1200, 1300, 1350, 1400, 1350, 1300, 1250, 1150, 1050],
+              median: [1150, 1250, 1350, 1450, 1550, 1600, 1650, 1600, 1550, 1500, 1400, 1300],
+              q3: [1400, 1500, 1600, 1700, 1800, 1850, 1900, 1850, 1800, 1750, 1650, 1550],
+              max: [1650, 1750, 1850, 1950, 2050, 2100, 2150, 2100, 2050, 2000, 1900, 1800],
+            },
+          ],
+          female: [
+            {
+              min: [850, 950, 1050, 1150, 1250, 1300, 1350, 1300, 1250, 1200, 1100, 1000],
+              q1: [1050, 1150, 1250, 1350, 1450, 1500, 1550, 1500, 1450, 1400, 1300, 1200],
+              median: [1300, 1400, 1500, 1600, 1700, 1750, 1800, 1750, 1700, 1650, 1550, 1450],
+              q3: [1550, 1650, 1750, 1850, 1950, 2000, 2050, 2000, 1950, 1900, 1800, 1700],
+              max: [1800, 1900, 2000, 2100, 2200, 2250, 2300, 2250, 2200, 2150, 2050, 1950],
+            },
+            {
+              min: [1050, 1150, 1250, 1350, 1450, 1500, 1550, 1500, 1450, 1400, 1300, 1200],
+              q1: [1250, 1350, 1450, 1550, 1650, 1700, 1750, 1700, 1650, 1600, 1500, 1400],
+              median: [1500, 1600, 1700, 1800, 1900, 1950, 2000, 1950, 1900, 1850, 1750, 1650],
+              q3: [1750, 1850, 1950, 2050, 2150, 2200, 2250, 2200, 2150, 2100, 2000, 1900],
+              max: [2000, 2100, 2200, 2300, 2400, 2450, 2500, 2450, 2400, 2350, 2250, 2150],
+            },
+            {
+              min: [750, 850, 950, 1050, 1150, 1200, 1250, 1200, 1150, 1100, 1000, 900],
+              q1: [950, 1050, 1150, 1250, 1350, 1400, 1450, 1400, 1350, 1300, 1200, 1100],
+              median: [1200, 1300, 1400, 1500, 1600, 1650, 1700, 1650, 1600, 1550, 1450, 1350],
+              q3: [1450, 1550, 1650, 1750, 1850, 1900, 1950, 1900, 1850, 1800, 1700, 1600],
+              max: [1700, 1800, 1900, 2000, 2100, 2150, 2200, 2150, 2100, 2050, 1950, 1850],
+            },
+          ],
+        }
+      case 13: // Calendar chart
+        return {
+          states: ["Karnataka", "Maharashtra", "Tamil Nadu"],
+          year: 2024,
+          months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+          days: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+          values: [
+            [
+              [1200, 1300, 1400, 1500, 1600, 900, 800],
+              [1300, 1400, 1500, 1600, 1700, 1000, 900],
+              [1400, 1500, 1600, 1700, 1800, 1100, 1000],
+              [1500, 1600, 1700, 1800, 1900, 1200, 1100],
+              [1600, 1700, 1800, 1900, 2000, 1300, 1200],
+              [1700, 1800, 1900, 2000, 2100, 1400, 1300],
+              [1800, 1900, 2000, 2100, 2200, 1500, 1400],
+              [1700, 1800, 1900, 2000, 2100, 1400, 1300],
+              [1600, 1700, 1800, 1900, 2000, 1300, 1200],
+              [1500, 1600, 1700, 1800, 1900, 1200, 1100],
+              [1400, 1500, 1600, 1700, 1800, 1100, 1000],
+              [1300, 1400, 1500, 1600, 1700, 1000, 900],
+            ],
+            [
+              [1500, 1600, 1700, 1800, 1900, 1200, 1100],
+              [1600, 1700, 1800, 1900, 2000, 1300, 1200],
+              [1700, 1800, 1900, 2000, 2100, 1400, 1300],
+              [1800, 1900, 2000, 2100, 2200, 1500, 1400],
+              [1900, 2000, 2100, 2200, 2300, 1600, 1500],
+              [2000, 2100, 2200, 2300, 2400, 1700, 1600],
+              [2100, 2200, 2300, 2400, 2500, 1800, 1700],
+              [2000, 2100, 2200, 2300, 2400, 1700, 1600],
+              [1900, 2000, 2100, 2200, 2300, 1600, 1500],
+              [1800, 1900, 2000, 2100, 2200, 1500, 1400],
+              [1700, 1800, 1900, 2000, 2100, 1400, 1300],
+              [1600, 1700, 1800, 1900, 2000, 1300, 1200],
+            ],
+            [
+              [1000, 1100, 1200, 1300, 1400, 800, 700],
+              [1100, 1200, 1300, 1400, 1500, 900, 800],
+              [1200, 1300, 1400, 1500, 1600, 1000, 900],
+              [1300, 1400, 1500, 1600, 1700, 1100, 1000],
+              [1400, 1500, 1600, 1700, 1800, 1200, 1100],
+              [1500, 1600, 1700, 1800, 1900, 1300, 1200],
+              [1600, 1700, 1800, 1900, 2000, 1400, 1300],
+              [1500, 1600, 1700, 1800, 1900, 1300, 1200],
+              [1400, 1500, 1600, 1700, 1800, 1200, 1100],
+              [1300, 1400, 1500, 1600, 1700, 1100, 1000],
+              [1200, 1300, 1400, 1500, 1600, 1000, 900],
+              [1100, 1200, 1300, 1400, 1500, 900, 800],
+            ],
+          ],
+        }
+      case 14: // Population pyramid chart
+        return {
+          states: ["Karnataka", "Maharashtra", "Tamil Nadu"],
+          districts: [
+            ["Bangalore", "Mysore", "Hubli", "Mangalore", "Belgaum"],
+            ["Mumbai", "Pune", "Nagpur", "Thane", "Nashik"],
+            ["Chennai", "Coimbatore", "Madurai", "Tiruchirappalli", "Salem"],
+          ],
+          male: [
+            [1200, 800, 600, 500, 400],
+            [1500, 1200, 900, 800, 600],
+            [1300, 900, 700, 600, 500],
+          ],
+          female: [
+            [1100, 750, 550, 450, 350],
+            [1400, 1100, 850, 750, 550],
+            [1200, 850, 650, 550, 450],
+          ],
         }
       default:
         return null

@@ -8,7 +8,7 @@ import NLPSearch from "@/components/NLPSearch"
 
 export default function Home() {
   const [selectedQuestion, setSelectedQuestion] = useState<number | null>(null)
-  const [selectedState, setSelectedState] = useState("IN")
+  const [selectedState, setSelectedState] = useState("India")
 
   const handleQuestionSelect = (questionId: number) => {
     setSelectedQuestion(questionId)

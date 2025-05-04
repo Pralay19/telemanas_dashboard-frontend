@@ -8,6 +8,7 @@ import { X, Download } from "lucide-react"
 import dynamic from 'next/dynamic';
 const Plot = dynamic(() => import('react-plotly.js'), { ssr: false });
 import { fetchQuestionCountryData, fetchQuestionStateData } from "@/utils/api"
+import { Button } from "./ui/button";
 
 interface QuestionModalProps {
   questionId: number
@@ -19,7 +20,44 @@ interface QuestionModalProps {
 export default function QuestionModal({ questionId, selectedState, onStateChange, onClose }: QuestionModalProps) {
   const [countryData, setCountryData] = useState<any>(null)
   const [stateData, setStateData] = useState<any>(null)
-  const [states, setStates] = useState<string[]>(["CA", "NY", "TX", "FL", "IL"])
+  const [states, setStates] = useState<string[]>([
+    "Karnataka",
+    "Tripura",
+    "Telangana",
+    "Bihar",
+    "Haryana",
+    "Kerala",
+    "Assam",
+    "Chhattisgarh",
+    "Punjab",
+    "Goa",
+    "Manipur",
+    "Delhi",
+    "Gujarat",
+    "Mizoram",
+    "Uttarakhand",
+    "Ladakh",
+    "Meghalaya",
+    "Arunachal_Pradesh",
+    "Nagaland",
+    "Sikkim",
+    "Uttar_Pradesh",
+    "Odisha",
+    "Jammu_Kashmir",
+    "Tamil_Nadu",
+    "Maharashtra",
+    "Madhya_Pradesh",
+    "West_Bengal",
+    "Jharkhand",
+    "Andhra_Pradesh",
+    "Rajasthan",
+    "Pondicherry",
+    "Chandigarh",
+    "Himachal_Pradesh",
+    "Dadra_Daman_Diu",
+    "Andaman_Nicobar",
+    "Lakshadweep"
+  ])
   const [loading, setLoading] = useState(true)
   const [downloading, setDownloading] = useState(false)
 
@@ -38,13 +76,20 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
         // Fetch state data for the question
         const stateResult = await fetchQuestionStateData(questionId, selectedState)
         setStateData(stateResult)
+
+        // Update states list if available in the data
+        if (stateResult && stateResult.states) {
+          setStates(stateResult.states)
+        }
       } catch (error) {
         console.error(`Error loading data for question ${questionId}:`, error)
       } finally {
         setLoading(false)
       }
     }
-
+    if (questionId === 3) {
+      window.open("http://localhost:5000/", "_blank");
+    } 
     loadData()
   }, [questionId, selectedState])
 
@@ -132,6 +177,7 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
 
     switch (questionId) {
       case 1: // Pie chart for categories
+      if (isCountry) {
         return {
           data: [
             {
@@ -169,8 +215,56 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
             },
           },
         }
+      } else {
+        // For state data, find the selected state in the states array
+        const stateIndex = data.states.findIndex(
+          (state: string) => state.toLowerCase() === selectedState.toLowerCase(),
+        )
+        
+        // If state is found, use its values, otherwise use the first state's values
+        const stateValues = stateIndex !== -1 ? data.values[stateIndex] : data.values[0]
+
+        return {
+          data: [
+            {
+              values: stateValues,
+              labels: data.labels,
+              type: "pie",
+              hole: 0.4,
+              marker: {
+                colors: ["#6366f1", "#8b5cf6", "#ec4899", "#f43f5e", "#10b981"],
+              },
+              textinfo: "label+percent",
+              textposition: "outside",
+              automargin: true,
+              hoverinfo: "label+percent+value",
+            },
+          ],
+          layout: {
+            title: `${selectedState} Data`,
+            autosize: true,
+            margin: { l: 0, r: 0, t: 40, b: 0 },
+            paper_bgcolor: "rgba(0,0,0,0)",
+            plot_bgcolor: "rgba(0,0,0,0)",
+            font: { color: "#e5e7eb" },
+            showlegend: true,
+            legend: {
+              orientation: "h",
+              xanchor: "center",
+              yanchor: "bottom",
+              x: 0.5,
+              y: -0.2,
+              bgcolor: "rgba(26, 34, 51, 0.7)",
+              bordercolor: "#4b5563",
+              borderwidth: 1,
+              font: { color: "#e5e7eb" },
+            },
+          },
+        }
+      }
 
       case 2: // Bar chart for time of day
+        if(isCountry){
         return {
           data: [
             {
@@ -214,6 +308,59 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
             },
           },
         }
+      } else {
+        // For state data, find the selected state in the states array
+        const stateIndex = data.states.findIndex(
+          (state: string) => state.toLowerCase() === selectedState.toLowerCase(),
+        )
+
+        // If state is found, use its values, otherwise use the first state's values
+        const stateValues = stateIndex !== -1 ? data.values[stateIndex] : data.values[0]
+
+        return {
+          data: [
+            {
+              x: data.labels,
+              y: stateValues,
+              type: "bar",
+              marker: {
+                color: "#6366f1",
+                opacity: 0.8,
+                line: {
+                  color: "#8b5cf6",
+                  width: 1.5,
+                },
+              },
+              name: "Call Volume",
+            },
+          ],
+          layout: {
+            title: title,
+            autosize: true,
+            margin: { l: 40, r: 20, t: 40, b: 40 },
+            paper_bgcolor: "rgba(0,0,0,0)",
+            plot_bgcolor: "rgba(0,0,0,0)",
+            font: { color: "#e5e7eb" },
+            xaxis: {
+              gridcolor: "#1f2937",
+              zerolinecolor: "#1f2937",
+              title: "Time of Day",
+            },
+            yaxis: {
+              gridcolor: "#1f2937",
+              zerolinecolor: "#1f2937",
+              title: "Call Volume",
+            },
+            showlegend: true,
+            legend: {
+              bgcolor: "rgba(26, 34, 51, 0.7)",
+              bordercolor: "#4b5563",
+              borderwidth: 1,
+              font: { color: "#e5e7eb" },
+            },
+          },
+        }
+      }
 
       case 3: // Scatter plot for duration vs resolution
         return {
@@ -264,6 +411,7 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
         }
 
       case 4: // Sankey diagram for reopened cases
+      if (isCountry) {
         return {
           data: [
             {
@@ -302,6 +450,56 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
             },
           },
         }
+      } else {
+        // For state data, find the selected state in the states array
+        const stateIndex = data.states
+          ? data.states.findIndex((state: string) => state.toLowerCase() === selectedState.toLowerCase())
+          : -1
+
+        // If state is found, use its values, otherwise use the data as is
+        const stateSources = stateIndex !== -1 && data.sources ? data.sources[stateIndex] : data.source
+        const stateTargets = stateIndex !== -1 && data.targets ? data.targets[stateIndex] : data.target
+        const stateValues = stateIndex !== -1 && data.values ? data.values[stateIndex] : data.value
+
+        return {
+          data: [
+            {
+              type: "sankey",
+              orientation: "h",
+              node: {
+                pad: 15,
+                thickness: 20,
+                line: {
+                  color: "black",
+                  width: 0.5,
+                },
+                label: data.nodes,
+                color: data.nodeColors || ["#6366f1", "#8b5cf6", "#ec4899", "#f43f5e", "#10b981"],
+              },
+              link: {
+                source: stateSources,
+                target: stateTargets,
+                value: stateValues,
+                color: data.linkColors || "rgba(99, 102, 241, 0.4)",
+              },
+            },
+          ],
+          layout: {
+            title: title,
+            autosize: true,
+            margin: { l: 0, r: 0, t: 40, b: 0 },
+            paper_bgcolor: "rgba(0,0,0,0)",
+            plot_bgcolor: "rgba(0,0,0,0)",
+            font: { color: "#e5e7eb" },
+            legend: {
+              bgcolor: "rgba(26, 34, 51, 0.7)",
+              bordercolor: "#4b5563",
+              borderwidth: 1,
+              font: { color: "#e5e7eb" },
+            },
+          },
+        }
+      }
 
       case 5: // Choropleth map
         return {
@@ -352,6 +550,7 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
 
       // Add new chart types
       case 6: // Line chart for call volumes and resolution rates over time
+      if (isCountry) {
         return {
           data: [
             {
@@ -419,6 +618,84 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
             },
           },
         }
+      } else {
+        // For state data, find the selected state in the states array
+        const stateIndex = data.states
+          ? data.states.findIndex((state: string) => state.toLowerCase() === selectedState.toLowerCase())
+          : -1
+
+        // If state is found, use its values, otherwise use the data as is
+        const stateY1 = stateIndex !== -1 && data.y1_values ? data.y1_values[stateIndex] : data.y1
+        const stateY2 = stateIndex !== -1 && data.y2_values ? data.y2_values[stateIndex] : data.y2
+
+        return {
+          data: [
+            {
+              x: data.x,
+              y: stateY1,
+              type: "scatter",
+              mode: "lines+markers",
+              name: data.labels[0],
+              line: {
+                color: "#6366f1",
+                width: 3,
+              },
+              marker: {
+                size: 8,
+                color: "#6366f1",
+              },
+            },
+            {
+              x: data.x,
+              y: stateY2,
+              type: "scatter",
+              mode: "lines+markers",
+              name: data.labels[1],
+              line: {
+                color: "#10b981",
+                width: 3,
+              },
+              marker: {
+                size: 8,
+                color: "#10b981",
+              },
+              yaxis: "y2",
+            },
+          ],
+          layout: {
+            title: title,
+            autosize: true,
+            margin: { l: 50, r: 50, t: 40, b: 40 },
+            paper_bgcolor: "rgba(0,0,0,0)",
+            plot_bgcolor: "rgba(0,0,0,0)",
+            font: { color: "#e5e7eb" },
+            xaxis: {
+              title: "Month",
+              gridcolor: "#1f2937",
+            },
+            yaxis: {
+              title: "Call Volume",
+              titlefont: { color: "#6366f1" },
+              tickfont: { color: "#6366f1" },
+            },
+            yaxis2: {
+              title: "Resolution Rate (%)",
+              titlefont: { color: "#10b981" },
+              tickfont: { color: "#10b981" },
+              overlaying: "y",
+              side: "right",
+              showgrid: false,
+            },
+            showlegend: true,
+            legend: {
+              bgcolor: "rgba(26, 34, 51, 0.7)",
+              bordercolor: "#4b5563",
+              borderwidth: 1,
+              font: { color: "#e5e7eb" },
+            },
+          },
+        }
+      }
 
       case 7: // Heatmap for call durations across hours
         return {
@@ -567,6 +844,7 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
         }
 
       case 10: // Area chart
+      if (isCountry) {
         return {
           data: [
             {
@@ -636,7 +914,545 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
             },
           },
         }
+      } else {
+        // For state data, find the selected state in the states array
+        const stateIndex = data.states
+          ? data.states.findIndex((state: string) => state.toLowerCase() === selectedState.toLowerCase())
+          : -1
 
+        // If state is found, use its values, otherwise use the data as is
+        const stateAnxiety = stateIndex !== -1 && data.anxiety_values ? data.anxiety_values[stateIndex] : data.anxiety
+        const stateDepression =
+          stateIndex !== -1 && data.depression_values ? data.depression_values[stateIndex] : data.depression
+        const stateStress = stateIndex !== -1 && data.stress_values ? data.stress_values[stateIndex] : data.stress
+        const stateOther = stateIndex !== -1 && data.other_values ? data.other_values[stateIndex] : data.other
+
+        return {
+          data: [
+            {
+              x: data.x,
+              y: stateAnxiety,
+              type: "scatter",
+              mode: "lines",
+              name: "Anxiety",
+              stackgroup: "one",
+              fillcolor: "rgba(99, 102, 241, 0.6)",
+              line: { color: "#6366f1", width: 1 },
+            },
+            {
+              x: data.x,
+              y: stateDepression,
+              type: "scatter",
+              mode: "lines",
+              name: "Depression",
+              stackgroup: "one",
+              fillcolor: "rgba(139, 92, 246, 0.6)",
+              line: { color: "#8b5cf6", width: 1 },
+            },
+            {
+              x: data.x,
+              y: stateStress,
+              type: "scatter",
+              mode: "lines",
+              name: "Stress",
+              stackgroup: "one",
+              fillcolor: "rgba(236, 72, 153, 0.6)",
+              line: { color: "#ec4899", width: 1 },
+            },
+            {
+              x: data.x,
+              y: stateOther,
+              type: "scatter",
+              mode: "lines",
+              name: "Other",
+              stackgroup: "one",
+              fillcolor: "rgba(244, 63, 94, 0.6)",
+              line: { color: "#f43f5e", width: 1 },
+            },
+          ],
+          layout: {
+            title: title,
+            autosize: true,
+            margin: { l: 50, r: 20, t: 40, b: 40 },
+            paper_bgcolor: "rgba(0,0,0,0)",
+            plot_bgcolor: "rgba(0,0,0,0)",
+            font: { color: "#e5e7eb" },
+            xaxis: {
+              title: "Month",
+              gridcolor: "#1f2937",
+              zerolinecolor: "#1f2937",
+            },
+            yaxis: {
+              title: "Number of Calls",
+              gridcolor: "#1f2937",
+              zerolinecolor: "#1f2937",
+            },
+            showlegend: true,
+            legend: {
+              bgcolor: "rgba(26, 34, 51, 0.7)",
+              bordercolor: "#4b5563",
+              borderwidth: 1,
+              font: { color: "#e5e7eb" },
+            },
+          },
+        }
+      }
+      case 11: // Complex Sankey diagram
+        if (isCountry) {
+          return {
+            data: [
+              {
+                type: "sankey",
+                orientation: "h",
+                node: {
+                  pad: 15,
+                  thickness: 20,
+                  line: {
+                    color: "black",
+                    width: 0.5,
+                  },
+                  label: data.nodes,
+                  color: data.nodeColors,
+                },
+                link: {
+                  source: data.source,
+                  target: data.target,
+                  value: data.value,
+                  color: "rgba(100, 100, 100, 0.4)",
+                },
+              },
+            ],
+            layout: {
+              title: "Self/Care-takers/Health Care Workers Calls by Gender and Age",
+              autosize: true,
+              margin: { l: 0, r: 0, t: 40, b: 0 },
+              paper_bgcolor: "rgba(0,0,0,0)",
+              plot_bgcolor: "rgba(0,0,0,0)",
+              font: { color: "#e5e7eb" },
+              showlegend: false,
+            },
+          }
+        } else {
+          // For state data, find the selected state in the states array
+          const stateIndex = data.states
+            ? data.states.findIndex((state: string) => state.toLowerCase() === selectedState.toLowerCase())
+            : -1
+
+          // If state is found, use its values, otherwise use the first state's values
+          const stateSources = stateIndex !== -1 && data.sources ? data.sources[stateIndex] : data.sources[0]
+          const stateTargets = stateIndex !== -1 && data.targets ? data.targets[stateIndex] : data.targets[0]
+          const stateValues = stateIndex !== -1 && data.values ? data.values[stateIndex] : data.values[0]
+
+          return {
+            data: [
+              {
+                type: "sankey",
+                orientation: "h",
+                node: {
+                  pad: 15,
+                  thickness: 20,
+                  line: {
+                    color: "black",
+                    width: 0.5,
+                  },
+                  label: data.nodes,
+                  color: data.nodeColors,
+                },
+                link: {
+                  source: stateSources,
+                  target: stateTargets,
+                  value: stateValues,
+                  color: "rgba(100, 100, 100, 0.4)",
+                },
+              },
+            ],
+            layout: {
+              title: `${selectedState}: Self/Care-takers/Health Care Workers Calls`,
+              autosize: true,
+              margin: { l: 0, r: 0, t: 40, b: 0 },
+              paper_bgcolor: "rgba(0,0,0,0)",
+              plot_bgcolor: "rgba(0,0,0,0)",
+              font: { color: "#e5e7eb" },
+              showlegend: false,
+            },
+          }
+        }
+
+      case 12: // Violin chart
+        if (isCountry) {
+          // Create violin plots for male and female data
+          const maleViolins = data.months.map((month: string, i: number) => ({
+            type: "violin",
+            x: Array(5).fill(month),
+            y: [data.male.min[i], data.male.q1[i], data.male.median[i], data.male.q3[i], data.male.max[i]],
+            name: "Male",
+            box: {
+              visible: true,
+            },
+            line: {
+              color: "#3b82f6",
+            },
+            meanline: {
+              visible: true,
+            },
+            legendgroup: "Male",
+            scalegroup: "Male",
+            side: "negative",
+            points: false,
+          }))
+
+          const femaleViolins = data.months.map((month: string, i: number) => ({
+            type: "violin",
+            x: Array(5).fill(month),
+            y: [data.female.min[i], data.female.q1[i], data.female.median[i], data.female.q3[i], data.female.max[i]],
+            name: "Female",
+            box: {
+              visible: true,
+            },
+            line: {
+              color: "#ec4899",
+            },
+            meanline: {
+              visible: true,
+            },
+            legendgroup: "Female",
+            scalegroup: "Female",
+            side: "positive",
+            points: false,
+          }))
+
+          return {
+            data: [...maleViolins, ...femaleViolins],
+            layout: {
+              title: "Monthly Call Volume Distribution by Gender",
+              autosize: true,
+              margin: { l: 50, r: 50, t: 40, b: 40 },
+              paper_bgcolor: "rgba(0,0,0,0)",
+              plot_bgcolor: "rgba(0,0,0,0)",
+              font: { color: "#e5e7eb" },
+              xaxis: {
+                title: "Month",
+                gridcolor: "#1f2937",
+              },
+              yaxis: {
+                title: "Call Volume",
+                gridcolor: "#1f2937",
+                zerolinecolor: "#1f2937",
+              },
+              violinmode: "overlay",
+              showlegend: true,
+              legend: {
+                bgcolor: "rgba(26, 34, 51, 0.7)",
+                bordercolor: "#4b5563",
+                borderwidth: 1,
+                font: { color: "#e5e7eb" },
+              },
+            },
+          }
+        } else {
+          // For state data, find the selected state in the states array
+          const stateIndex = data.states
+            ? data.states.findIndex((state: string) => state.toLowerCase() === selectedState.toLowerCase())
+            : -1
+
+          // If state is found, use its values, otherwise use the first state's values
+          const stateMale = stateIndex !== -1 && data.male ? data.male[stateIndex] : data.male[0]
+          const stateFemale = stateIndex !== -1 && data.female ? data.female[stateIndex] : data.female[0]
+
+          // Create violin plots for male and female data
+          const maleViolins = data.months.map((month: string, i: number) => ({
+            type: "violin",
+            x: Array(5).fill(month),
+            y: [stateMale.min[i], stateMale.q1[i], stateMale.median[i], stateMale.q3[i], stateMale.max[i]],
+            name: "Male",
+            box: {
+              visible: true,
+            },
+            line: {
+              color: "#3b82f6",
+            },
+            meanline: {
+              visible: true,
+            },
+            legendgroup: "Male",
+            scalegroup: "Male",
+            side: "negative",
+            points: false,
+          }))
+
+          const femaleViolins = data.months.map((month: string, i: number) => ({
+            type: "violin",
+            x: Array(5).fill(month),
+            y: [stateFemale.min[i], stateFemale.q1[i], stateFemale.median[i], stateFemale.q3[i], stateFemale.max[i]],
+            name: "Female",
+            box: {
+              visible: true,
+            },
+            line: {
+              color: "#ec4899",
+            },
+            meanline: {
+              visible: true,
+            },
+            legendgroup: "Female",
+            scalegroup: "Female",
+            side: "positive",
+            points: false,
+          }))
+
+          return {
+            data: [...maleViolins, ...femaleViolins],
+            layout: {
+              title: `${selectedState}: Monthly Call Volume Distribution by Gender`,
+              autosize: true,
+              margin: { l: 50, r: 50, t: 40, b: 40 },
+              paper_bgcolor: "rgba(0,0,0,0)",
+              plot_bgcolor: "rgba(0,0,0,0)",
+              font: { color: "#e5e7eb" },
+              xaxis: {
+                title: "Month",
+                gridcolor: "#1f2937",
+              },
+              yaxis: {
+                title: "Call Volume",
+                gridcolor: "#1f2937",
+                zerolinecolor: "#1f2937",
+              },
+              violinmode: "overlay",
+              showlegend: true,
+              legend: {
+                bgcolor: "rgba(26, 34, 51, 0.7)",
+                bordercolor: "#4b5563",
+                borderwidth: 1,
+                font: { color: "#e5e7eb" },
+              },
+            },
+          }
+        }
+
+      case 13: // Calendar chart
+        if (isCountry) {
+          // Create a heatmap for the calendar
+          return {
+            data: [
+              {
+                z: data.values,
+                x: Array.from({ length: 7 }, (_, i) => data.days[i]),
+                y: Array.from({ length: 12 }, (_, i) => data.months[i]),
+                type: "heatmap",
+                colorscale: [
+                  [0, "#e5f5e0"],
+                  [0.25, "#c7e9c0"],
+                  [0.5, "#a1d99b"],
+                  [0.75, "#74c476"],
+                  [1, "#31a354"],
+                ],
+                showscale: true,
+                colorbar: {
+                  title: "Call Volume",
+                  thickness: 20,
+                  outlinewidth: 0,
+                  bordercolor: "#4b5563",
+                  tickfont: { color: "#e5e7eb" },
+                  titlefont: { color: "#e5e7eb" },
+                },
+              },
+            ],
+            layout: {
+              title: `Call Volume Calendar for ${data.year}`,
+              autosize: true,
+              margin: { l: 50, r: 50, t: 40, b: 40 },
+              paper_bgcolor: "rgba(0,0,0,0)",
+              plot_bgcolor: "rgba(0,0,0,0)",
+              font: { color: "#e5e7eb" },
+              xaxis: {
+                title: "Day of Week",
+                gridcolor: "#1f2937",
+              },
+              yaxis: {
+                title: "Month",
+                gridcolor: "#1f2937",
+                autorange: "reversed",
+              },
+              showlegend: false,
+              annotations: [
+                {
+                  x: 0.5,
+                  y: -0.15,
+                  xref: "paper",
+                  yref: "paper",
+                  text: "Number of Calls Made Monthly in 2024",
+                  showarrow: false,
+                  font: {
+                    size: 14,
+                    color: "#e5e7eb",
+                  },
+                },
+              ],
+            },
+          }
+        } else {
+          // For state data, find the selected state in the states array
+          const stateIndex = data.states
+            ? data.states.findIndex((state: string) => state.toLowerCase() === selectedState.toLowerCase())
+            : -1
+
+          // If state is found, use its values, otherwise use the first state's values
+          const stateValues = stateIndex !== -1 && data.values ? data.values[stateIndex] : data.values[0]
+
+          return {
+            data: [
+              {
+                z: stateValues,
+                x: Array.from({ length: 7 }, (_, i) => data.days[i]),
+                y: Array.from({ length: 12 }, (_, i) => data.months[i]),
+                type: "heatmap",
+                colorscale: [
+                  [0, "#e5f5e0"],
+                  [0.25, "#c7e9c0"],
+                  [0.5, "#a1d99b"],
+                  [0.75, "#74c476"],
+                  [1, "#31a354"],
+                ],
+                showscale: true,
+                colorbar: {
+                  title: "Call Volume",
+                  thickness: 20,
+                  outlinewidth: 0,
+                  bordercolor: "#4b5563",
+                  tickfont: { color: "#e5e7eb" },
+                  titlefont: { color: "#e5e7eb" },
+                },
+              },
+            ],
+            layout: {
+              title: `${selectedState}: Call Volume Calendar for ${data.year}`,
+              autosize: true,
+              margin: { l: 50, r: 50, t: 40, b: 40 },
+              paper_bgcolor: "rgba(0,0,0,0)",
+              plot_bgcolor: "rgba(0,0,0,0)",
+              font: { color: "#e5e7eb" },
+              xaxis: {
+                title: "Day of Week",
+                gridcolor: "#1f2937",
+              },
+              yaxis: {
+                title: "Month",
+                gridcolor: "#1f2937",
+                autorange: "reversed",
+              },
+              showlegend: false,
+              annotations: [
+                {
+                  x: 0.5,
+                  y: -0.15,
+                  xref: "paper",
+                  yref: "paper",
+                  text: "Number of Calls Made Monthly in 2024",
+                  showarrow: false,
+                  font: {
+                    size: 14,
+                    color: "#e5e7eb",
+                  },
+                },
+              ],
+            },
+          }
+        }
+
+      case 14: // Population pyramid chart
+        // This chart doesn't have a country version, only state
+        // For state data, find the selected state in the states array
+        const stateIndex = data.states
+          ? data.states.findIndex((state: string) => state.toLowerCase() === selectedState.toLowerCase())
+          : -1
+
+        // If state is found, use its values, otherwise use the first state's values
+        const stateDistricts = stateIndex !== -1 && data.districts ? data.districts[stateIndex] : data.districts[0]
+        const stateMale = stateIndex !== -1 && data.male ? data.male[stateIndex] : data.male[0]
+        const stateFemale = stateIndex !== -1 && data.female ? data.female[stateIndex] : data.female[0]
+
+        return {
+          data: [
+            {
+              y: stateDistricts,
+              x: stateMale.map((val: number) => -val), // Negative values for male
+              type: "bar",
+              name: "Male",
+              orientation: "h",
+              marker: {
+                color: "#3b82f6",
+              },
+              hoverinfo: "x+name",
+              hovertemplate: "Male: %{x:,.0f}<extra></extra>",
+            },
+            {
+              y: stateDistricts,
+              x: stateFemale,
+              type: "bar",
+              name: "Female",
+              orientation: "h",
+              marker: {
+                color: "#ec4899",
+              },
+              hoverinfo: "x+name",
+              hovertemplate: "Female: %{x:,.0f}<extra></extra>",
+            },
+          ],
+          layout: {
+            title: `${selectedState}: Call Distribution by District and Gender`,
+            autosize: true,
+            margin: { l: 100, r: 20, t: 40, b: 40 },
+            paper_bgcolor: "rgba(0,0,0,0)",
+            plot_bgcolor: "rgba(0,0,0,0)",
+            font: { color: "#e5e7eb" },
+            barmode: "relative",
+            bargap: 0.1,
+            xaxis: {
+              title: "Number of Calls",
+              gridcolor: "#1f2937",
+              zerolinecolor: "#1f2937",
+              tickformat: ",d",
+              hoverformat: ",d",
+            },
+            yaxis: {
+              title: "District",
+              gridcolor: "#1f2937",
+              zerolinecolor: "#1f2937",
+            },
+            showlegend: true,
+            legend: {
+              bgcolor: "rgba(26, 34, 51, 0.7)",
+              bordercolor: "#4b5563",
+              borderwidth: 1,
+              font: { color: "#e5e7eb" },
+              x: 0.5,
+              y: 1.1,
+              xanchor: "center",
+              orientation: "h",
+            },
+            annotations: [
+              {
+                x: -Math.max(...stateMale) / 2,
+                y: stateDistricts.length + 0.5,
+                text: "Male",
+                showarrow: false,
+                font: {
+                  color: "#3b82f6",
+                },
+              },
+              {
+                x: Math.max(...stateFemale) / 2,
+                y: stateDistricts.length + 0.5,
+                text: "Female",
+                showarrow: false,
+                font: {
+                  color: "#ec4899",
+                },
+              },
+            ],
+          },
+        }
       default:
         return null
     }
@@ -646,99 +1462,124 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
   const stateChartConfig = getChartConfig(stateData, false)
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-[#1a2233] rounded-[1.5rem] shadow-2xl w-full max-w-6xl my-8 overflow-hidden">
-        <div className="flex justify-between items-center p-4 border-b border-gray-800">
-          <h2 className="text-xl font-bold">Question {questionId} Analysis</h2>
-          <button onClick={onClose} className="p-2 hover:bg-gray-800 rounded-full">
-            <X size={20} />
-          </button>
-        </div>
-
-        <div className="p-4 overflow-y-auto">
-          <div className="flex justify-end mb-4">
-            <div className="flex items-center">
-              <label htmlFor="modal-state-select" className="mr-2 text-gray-400">
-                Select State for Comparison:
-              </label>
-              <select
-                id="modal-state-select"
-                value={selectedState}
-                onChange={handleStateChange}
-                className="bg-[#242f47] border border-gray-700 rounded-md px-3 py-1 text-white"
-              >
-                {states.map((state) => (
-                  <option key={state} value={state}>
-                    {state}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {loading ? (
-            <div className="flex justify-center items-center h-64">
-              <div className="text-xl text-gray-400">Loading chart data...</div>
-            </div>
+    <>
+      <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 overflow-y-auto">
+        <div className="bg-[#1a2233] rounded-[1.5rem] shadow-2xl w-full max-w-6xl my-8 overflow-hidden">
+          {questionId !== 3 ? (
+            <>
+              <div className="flex justify-between items-center p-4 border-b border-gray-800">
+                <h2 className="text-xl font-bold">Question {questionId} Analysis</h2>
+                <button onClick={onClose} className="p-2 hover:bg-gray-800 rounded-full">
+                  <X size={20} />
+                </button>
+              </div>
+  
+              <div className="p-4 overflow-y-auto">
+                <div className="flex justify-end mb-4">
+                  <div className="flex items-center">
+                    <label htmlFor="modal-state-select" className="mr-2 text-gray-400">
+                      Select State for Comparison:
+                    </label>
+                    <select
+                      id="modal-state-select"
+                      value={selectedState}
+                      onChange={handleStateChange}
+                      className="bg-[#242f47] border border-gray-700 rounded-md px-3 py-1 text-white"
+                    >
+                      {states.map((state) => (
+                        <option key={state} value={state}>
+                          {state}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+  
+                {loading ? (
+                  <div className="flex justify-center items-center h-64">
+                    <div className="text-xl text-gray-400">Loading chart data...</div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Left pane: Country chart */}
+                    {questionId !== 14 && (
+                      <div className="bg-[#242f47] rounded-xl p-4">
+                        <div className="h-[400px]">
+                          {countryChartConfig && (
+                            <Plot
+                              ref={countryChartRef}
+                              data={countryChartConfig.data}
+                              layout={countryChartConfig.layout}
+                              config={{ responsive: true, displayModeBar: false }}
+                              style={{ width: "100%", height: "100%" }}
+                            />
+                          )}
+                        </div>
+                        <div className="mt-4 flex justify-center">
+                          <button
+                            onClick={() => downloadChartAsPng(countryChartRef, "national")}
+                            disabled={downloading}
+                            className={`flex items-center gap-2 px-4 py-2 ${
+                              downloading ? "bg-gray-600" : "bg-purple-700 hover:bg-purple-600"
+                            } rounded-md text-sm`}
+                          >
+                            <Download size={16} />
+                            {downloading ? "Downloading..." : "Download Chart"}
+                          </button>
+                        </div>
+                      </div>
+                    )}
+  
+                    {/* Right pane: State chart */}
+                    <div
+                      className={`bg-[#242f47] rounded-xl p-4 ${
+                        questionId === 14 ? "md:col-span-2" : ""
+                      }`}
+                    >
+                      <div className="h-[400px]">
+                        {stateChartConfig && (
+                          <Plot
+                            ref={stateChartRef}
+                            data={stateChartConfig.data}
+                            layout={stateChartConfig.layout}
+                            config={{ responsive: true, displayModeBar: false }}
+                            style={{ width: "100%", height: "100%" }}
+                          />
+                        )}
+                      </div>
+                      <div className="mt-4 flex justify-center">
+                        <button
+                          onClick={() => downloadChartAsPng(stateChartRef, "state")}
+                          disabled={downloading}
+                          className={`flex items-center gap-2 px-4 py-2 ${
+                            downloading ? "bg-gray-600" : "bg-purple-700 hover:bg-purple-600"
+                          } rounded-md text-sm`}
+                        >
+                          <Download size={16} />
+                          {downloading ? "Downloading..." : "Download Chart"}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Left pane: Country chart */}
-              <div className="bg-[#242f47] rounded-xl p-4">
-                <div className="h-[400px]">
-                  {countryChartConfig && (
-                    <Plot
-                      ref={countryChartRef}
-                      data={countryChartConfig.data}
-                      layout={countryChartConfig.layout}
-                      config={{ responsive: true, displayModeBar: false }}
-                      style={{ width: "100%", height: "100%" }}
-                    />
-                  )}
-                </div>
-                <div className="mt-4 flex justify-center">
-                  <button
-                    onClick={() => downloadChartAsPng(countryChartRef, "national")}
-                    disabled={downloading}
-                    className={`flex items-center gap-2 px-4 py-2 ${
-                      downloading ? "bg-gray-600" : "bg-purple-700 hover:bg-purple-600"
-                    } rounded-md text-sm`}
-                  >
-                    <Download size={16} />
-                    {downloading ? "Downloading..." : "Download Chart"}
-                  </button>
-                </div>
-              </div>
-
-              {/* Right pane: State chart */}
-              <div className="bg-[#242f47] rounded-xl p-4">
-                <div className="h-[400px]">
-                  {stateChartConfig && (
-                    <Plot
-                      ref={stateChartRef}
-                      data={stateChartConfig.data}
-                      layout={stateChartConfig.layout}
-                      config={{ responsive: true, displayModeBar: false }}
-                      style={{ width: "100%", height: "100%" }}
-                    />
-                  )}
-                </div>
-                <div className="mt-4 flex justify-center">
-                  <button
-                    onClick={() => downloadChartAsPng(stateChartRef, "state")}
-                    disabled={downloading}
-                    className={`flex items-center gap-2 px-4 py-2 ${
-                      downloading ? "bg-gray-600" : "bg-purple-700 hover:bg-purple-600"
-                    } rounded-md text-sm`}
-                  >
-                    <Download size={16} />
-                    {downloading ? "Downloading..." : "Download Chart"}
-                  </button>
-                </div>
-              </div>
+            <div className="flex justify-between items-center p-4 border-b border-gray-800">
+              <div className="text-xl font-bold">Number of repeated callers:</div>
+              <button
+                onClick={() => window.open("http://localhost:5000/", "_blank")}
+                className="flex items-center gap-2 px-4 py-2 bg-purple-700 hover:bg-purple-600 rounded-md text-sm"
+              >
+                View Analysis
+              </button>
+              <button onClick={onClose} className="p-2 hover:bg-gray-800 rounded-full">
+                <X size={20} />
+              </button>
             </div>
           )}
         </div>
       </div>
-    </div>
-  )
-}
+    </>
+  );
+}  

@@ -19,8 +19,8 @@ export default function QuestionList({ onQuestionSelect }: QuestionListProps) {
     },
     {
       id: 3,
-      text: "What is the correlation between call duration and issue resolution?",
-      chartType: "Scatter",
+      text: "What is the number of repeated callers India vs States?",
+      chartType: "",
     },
     {
       id: 4,
@@ -58,6 +58,26 @@ export default function QuestionList({ onQuestionSelect }: QuestionListProps) {
       text: "How have call categories evolved over the past months?",
       chartType: "Area",
     },
+    {
+      id: 11,
+      text: "Self/care-takers/Health Care Workers calls, looking at trends against gender and age",
+      chartType: "Complex Sankey",
+    },
+    {
+      id: 12,
+      text: "Monthly call volume distribution by gender across different states",
+      chartType: "Violin",
+    },
+    {
+      id: 13,
+      text: "Daily call volume throughout the year",
+      chartType: "Calendar",
+    },
+    {
+      id: 14,
+      text: "Call distribution by district and gender",
+      chartType: "Population Pyramid",
+    },
   ]
 
   return (
@@ -71,7 +91,7 @@ export default function QuestionList({ onQuestionSelect }: QuestionListProps) {
                 <span className="inline-block px-2 py-1 bg-blue-900 text-xs rounded-md text-blue-200">
                   {question.chartType} Chart
                 </span>
-              </div>
+              </div>  
               <button
                 onClick={() => onQuestionSelect(question.id)}
                 className="ml-4 px-4 py-2 bg-purple-700 hover:bg-purple-600 rounded-md text-sm whitespace-nowrap"
