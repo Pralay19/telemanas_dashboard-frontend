@@ -20,4 +20,6 @@ This is a **Next.js** application built with **TypeScript**.
 2. **Install next.js**
    ```bash
    npx create-next-app@latest my-app --typescript
-
+3. **Run the app**
+   ```bash
+    npm run dev
