@@ -5,6 +5,7 @@ import MainDashboard from "@/components/MainDashboard"
 import QuestionList from "@/components/QuestionList"
 import QuestionModal from "@/components/QuestionModal"
 import NLPSearch from "@/components/NLPSearch"
+import { Button } from "@/components/ui/button"
 
 export default function Home() {
   const [selectedQuestion, setSelectedQuestion] = useState<number | null>(null)
@@ -31,10 +32,21 @@ export default function Home() {
 
       <MainDashboard selectedState={selectedState} onStateChange={handleStateChange} />
 
-      {/*NLP search bar*/}
-      <div className="mt-10">
+      {/*NLP search bar, this can be setuped to use with the NLP backend but for the time being we chose to go with
+      another approach as the system that we built can also generate graphs so we don't require to render
+      separate graphs by taking the inputs from the backend. But this component can be used for interactivity and
+      UI purposes. */}
+      {/* <div className="mt-10">
         <NLPSearch />
-      </div>
+      </div> */}
+      <div className="mt-10">
+        <h2 className="text-2xl font-bold mb-4 ">Natural Language Query</h2>
+        <button className="ml-4 px-4 py-2 bg-purple-700 hover:bg-purple-600 rounded-md text-sm whitespace-nowrap"
+            onClick={() => {window.open("http://localhost:8001/", "_blank");}}
+              >
+           Ask
+        </button>
+        </div>
 
       <div className="mt-10">
         <h2 className="text-2xl font-bold mb-4">Analysis Questions</h2>
