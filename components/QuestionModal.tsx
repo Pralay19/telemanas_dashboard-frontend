@@ -10,6 +10,9 @@ const Plot = dynamic(() => import('react-plotly.js'), { ssr: false });
 import { fetchQuestionCountryData, fetchQuestionStateData } from "@/utils/api"
 import { Button } from "./ui/button";
 
+//For choropleth map
+import indiaGeoJSON from "./india.json"; 
+
 interface QuestionModalProps {
   questionId: number
   selectedState: string
@@ -316,12 +319,16 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
 
         // If state is found, use its values, otherwise use the first state's values
         const stateValues = stateIndex !== -1 ? data.values[stateIndex] : data.values[0]
-
+        // const stateValues = data.values[stateIndex] || data.values[0]
+        const stateY = stateValues.map((value: number) => Math.ceil(value / 10) * 10)
+        // console.log("State Y values:", stateY)
+        const maxY = Math.max(...stateY);
+        const top = Math.ceil(maxY/10)*10;
         return {
           data: [
             {
               x: data.labels,
-              y: stateValues,
+              y: stateY,
               type: "bar",
               marker: {
                 color: "#6366f1",
@@ -350,6 +357,15 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
               gridcolor: "#1f2937",
               zerolinecolor: "#1f2937",
               title: "Call Volume",
+              tickmode: "linear",
+              tick0: 0,
+              dtick: 10,
+              minor: {
+                showgrid: false,   // no minor‐gridlines
+                showticklabels: false  // no minor tick labels
+              },
+              showgrid: true,
+              ticks: "outside"
             },
             showlegend: true,
             legend: {
@@ -450,69 +466,24 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
             },
           },
         }
-      } else {
-        // For state data, find the selected state in the states array
-        const stateIndex = data.states
-          ? data.states.findIndex((state: string) => state.toLowerCase() === selectedState.toLowerCase())
-          : -1
+      } 
+      
 
-        // If state is found, use its values, otherwise use the data as is
-        const stateSources = stateIndex !== -1 && data.sources ? data.sources[stateIndex] : data.source
-        const stateTargets = stateIndex !== -1 && data.targets ? data.targets[stateIndex] : data.target
-        const stateValues = stateIndex !== -1 && data.values ? data.values[stateIndex] : data.value
-
-        return {
-          data: [
-            {
-              type: "sankey",
-              orientation: "h",
-              node: {
-                pad: 15,
-                thickness: 20,
-                line: {
-                  color: "black",
-                  width: 0.5,
-                },
-                label: data.nodes,
-                color: data.nodeColors || ["#6366f1", "#8b5cf6", "#ec4899", "#f43f5e", "#10b981"],
-              },
-              link: {
-                source: stateSources,
-                target: stateTargets,
-                value: stateValues,
-                color: data.linkColors || "rgba(99, 102, 241, 0.4)",
-              },
-            },
-          ],
-          layout: {
-            title: title,
-            autosize: true,
-            margin: { l: 0, r: 0, t: 40, b: 0 },
-            paper_bgcolor: "rgba(0,0,0,0)",
-            plot_bgcolor: "rgba(0,0,0,0)",
-            font: { color: "#e5e7eb" },
-            legend: {
-              bgcolor: "rgba(26, 34, 51, 0.7)",
-              bordercolor: "#4b5563",
-              borderwidth: 1,
-              font: { color: "#e5e7eb" },
-            },
-          },
-        }
-      }
-
-      case 5: // Choropleth map
+      case 5: // Choropleth map for India
+      if (isCountry) {
         return {
           data: [
             {
               type: "choropleth",
-              locationmode: "USA-states",
+              geojson: indiaGeoJSON, // Path to the GeoJSON file
+              featureidkey: "properties.st_nm",
+              locationmode: "geojson-id", 
               locations: data.locations,
               z: data.values,
               text: data.text,
-              colorscale: "Viridis",
+              colorscale: "hot",// Use a different colorscale
               colorbar: {
-                title: "Call Volume",
+                title: "Complaint Volume",
                 thickness: 20,
                 outlinewidth: 0,
                 bordercolor: "#4b5563",
@@ -525,40 +496,86 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
                   width: 1,
                 },
               },
+              hovertemplate: "%{text}<br>Complaints: %{z}<extra></extra>",
             },
           ],
           layout: {
             title: title,
             geo: {
-              scope: "usa",
-              showlakes: true,
-              lakecolor: "#1a2233",
+              scope: "asia", // Use a broader scope
+              center: { lon: 80, lat: 22 }, // Center on India
+              projection: { scale: 5 }, // Adjust scale to fit India
+              showland: true,
+              landcolor: "rgb(20, 20, 20)",
+              showocean: true,
+              oceancolor: "rgb(30, 30, 30)",
+              showlakes: false,
               bgcolor: "rgba(0,0,0,0)",
             },
             paper_bgcolor: "rgba(0,0,0,0)",
             plot_bgcolor: "rgba(0,0,0,0)",
             font: { color: "#e5e7eb" },
             margin: { l: 0, r: 0, t: 40, b: 0 },
-            legend: {
-              bgcolor: "rgba(26, 34, 51, 0.7)",
-              bordercolor: "#4b5563",
-              borderwidth: 1,
-              font: { color: "#e5e7eb" },
-            },
           },
         }
+      } else {
+        // Find index of the selected state
+        const stateIndex = data.states.findIndex(
+          (state) => state.toLowerCase() === selectedState.toLowerCase()
+        );
+      
+        // Get the 5 districts and values for that state
+        const districtLabels = data.labels[stateIndex];
+        const districtValues = data.values[stateIndex];
+      
+        return {
+          data: [
+            {
+              x: districtLabels,       // districts as x-axis
+              y: districtValues,       // complaint counts as y-axis
+              type: "bar",
+              text: districtLabels,    // use districts in hover text
+              marker: {
+                color: "#6366f1",
+                opacity: 0.8,
+              },
+              hovertemplate: "%{text}<br>Complaints: %{y}<extra></extra>",
+            },
+          ],
+          layout: {
+            title: `${selectedState} Districts`,
+            autosize: true,
+            margin: { l: 50, r: 20, t: 40, b: 40 },
+            paper_bgcolor: "rgba(0,0,0,0)",
+            plot_bgcolor: "rgba(0,0,0,0)",
+            font: { color: "#e5e7eb" },
+            xaxis: {
+              title: "District",
+              gridcolor: "#1f2937",
+              zerolinecolor: "#1f2937",
+            },
+            yaxis: {
+              title: "Number of Complaints",
+              gridcolor: "#1f2937",
+              zerolinecolor: "#1f2937",
+            },
+            showlegend: false,
+          },
+        };
+      }
 
       // Add new chart types
       case 6: // Line chart for call volumes and resolution rates over time
+      
       if (isCountry) {
         return {
           data: [
             {
               x: data.x,
-              y: data.y1,
+              y: data.y,
               type: "scatter",
               mode: "lines+markers",
-              name: data.labels[0],
+              name: data.name || "Call Volume",
               line: {
                 color: "#6366f1",
                 width: 3,
@@ -568,22 +585,7 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
                 color: "#6366f1",
               },
             },
-            {
-              x: data.x,
-              y: data.y2,
-              type: "scatter",
-              mode: "lines+markers",
-              name: data.labels[1],
-              line: {
-                color: "#10b981",
-                width: 3,
-              },
-              marker: {
-                size: 8,
-                color: "#10b981",
-              },
-              yaxis: "y2",
-            },
+            
           ],
           layout: {
             title: title,
@@ -600,14 +602,8 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
               title: "Call Volume",
               titlefont: { color: "#6366f1" },
               tickfont: { color: "#6366f1" },
-            },
-            yaxis2: {
-              title: "Resolution Rate (%)",
-              titlefont: { color: "#10b981" },
-              tickfont: { color: "#10b981" },
-              overlaying: "y",
-              side: "right",
-              showgrid: false,
+              gridcolor: "#1f2937",
+              zerolinecolor: "#1f2937",
             },
             showlegend: true,
             legend: {
@@ -620,81 +616,75 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
         }
       } else {
         // For state data, find the selected state in the states array
+        // For state data, find the selected state in the states array
         const stateIndex = data.states
-          ? data.states.findIndex((state: string) => state.toLowerCase() === selectedState.toLowerCase())
-          : -1
+        ? data.states.findIndex((state: string) => state.toLowerCase() === selectedState.toLowerCase())
+        : -1
 
-        // If state is found, use its values, otherwise use the data as is
-        const stateY1 = stateIndex !== -1 && data.y1_values ? data.y1_values[stateIndex] : data.y1
-        const stateY2 = stateIndex !== -1 && data.y2_values ? data.y2_values[stateIndex] : data.y2
+      // If state is found, use its values, otherwise use the data as is
+      const stateY = stateIndex !== -1 && data.y ? data.y[stateIndex] : data.y
+      // const stateY2 = stateIndex !== -1 && data.y2_values ? data.y2_values[stateIndex] : data.y2
 
-        return {
-          data: [
-            {
-              x: data.x,
-              y: stateY1,
-              type: "scatter",
-              mode: "lines+markers",
-              name: data.labels[0],
-              line: {
-                color: "#6366f1",
-                width: 3,
-              },
-              marker: {
-                size: 8,
-                color: "#6366f1",
-              },
+      return {
+        data: [
+          {
+            x: data.x,
+            y: stateY,
+            type: "scatter",
+            mode: "lines+markers",
+            name: data.labels[0],
+            line: {
+              color: "#6366f1",
+              width: 3,
             },
-            {
-              x: data.x,
-              y: stateY2,
-              type: "scatter",
-              mode: "lines+markers",
-              name: data.labels[1],
-              line: {
-                color: "#10b981",
-                width: 3,
-              },
-              marker: {
-                size: 8,
-                color: "#10b981",
-              },
-              yaxis: "y2",
-            },
-          ],
-          layout: {
-            title: title,
-            autosize: true,
-            margin: { l: 50, r: 50, t: 40, b: 40 },
-            paper_bgcolor: "rgba(0,0,0,0)",
-            plot_bgcolor: "rgba(0,0,0,0)",
-            font: { color: "#e5e7eb" },
-            xaxis: {
-              title: "Month",
-              gridcolor: "#1f2937",
-            },
-            yaxis: {
-              title: "Call Volume",
-              titlefont: { color: "#6366f1" },
-              tickfont: { color: "#6366f1" },
-            },
-            yaxis2: {
-              title: "Resolution Rate (%)",
-              titlefont: { color: "#10b981" },
-              tickfont: { color: "#10b981" },
-              overlaying: "y",
-              side: "right",
-              showgrid: false,
-            },
-            showlegend: true,
-            legend: {
-              bgcolor: "rgba(26, 34, 51, 0.7)",
-              bordercolor: "#4b5563",
-              borderwidth: 1,
-              font: { color: "#e5e7eb" },
+            marker: {
+              size: 8,
+              color: "#6366f1",
             },
           },
-        }
+          
+        ],
+        layout: {
+          title: title,
+          autosize: true,
+          margin: { l: 50, r: 50, t: 40, b: 40 },
+          paper_bgcolor: "rgba(0,0,0,0)",
+          plot_bgcolor: "rgba(0,0,0,0)",
+          font: { color: "#e5e7eb" },
+          xaxis: {
+            title: "Month",
+            gridcolor: "#1f2937",
+          },
+          yaxis: {
+            title: "Call Volume",
+            titlefont: { color: "#6366f1" },
+            tickfont: { color: "#6366f1" },
+            gridcolor: "#1f2937",
+            zerolinecolor: "#1f2937",
+            autorange: false,
+            range:     [0, top],
+
+            tickmode: "linear",
+            tick0:     0,
+            dtick:    10,
+
+            minor: {
+              showgrid:       false,
+              showticklabels: false,
+            },
+
+            showgrid: true,
+            ticks:    "outside",
+          },
+          showlegend: true,
+          legend: {
+            bgcolor: "rgba(26, 34, 51, 0.7)",
+            bordercolor: "#4b5563",
+            borderwidth: 1,
+            font: { color: "#e5e7eb" },
+          },
+        },
+      }
       }
 
       case 7: // Heatmap for call durations across hours
@@ -1140,7 +1130,7 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
                 zerolinecolor: "#1f2937",
               },
               violinmode: "overlay",
-              showlegend: true,
+              showlegend: false,
               legend: {
                 bgcolor: "rgba(26, 34, 51, 0.7)",
                 bordercolor: "#4b5563",
@@ -1219,7 +1209,7 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
                 zerolinecolor: "#1f2937",
               },
               violinmode: "overlay",
-              showlegend: true,
+              showlegend: false,
               legend: {
                 bgcolor: "rgba(26, 34, 51, 0.7)",
                 bordercolor: "#4b5563",
@@ -1503,7 +1493,7 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Left pane: Country chart */}
                     {questionId !== 14 && (
-                      <div className="bg-[#242f47] rounded-xl p-4">
+                      <div className={`bg-[#242f47] rounded-xl p-4 ${questionId === 4 ? "md:col-span-2" : ""}`}>
                         <div className="h-[400px]">
                           {countryChartConfig && (
                             <Plot
@@ -1531,8 +1521,8 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
                     )}
   
                     {/* Right pane: State chart */}
-                    <div
-                      className={`bg-[#242f47] rounded-xl p-4 ${
+                    {questionId !==4 && questionId !== 14 && (
+                    <div className={`bg-[#242f47] rounded-xl p-4 ${
                         questionId === 14 ? "md:col-span-2" : ""
                       }`}
                     >
@@ -1560,6 +1550,7 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
                         </button>
                       </div>
                     </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -1568,7 +1559,7 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
             <div className="flex justify-between items-center p-4 border-b border-gray-800">
               <div className="text-xl font-bold">Number of repeated callers:</div>
               <button
-                onClick={() => window.open("http://localhost:5000/", "_blank")}
+                onClick={() => window.open("http://localhost:8001/", "_blank")}
                 className="flex items-center gap-2 px-4 py-2 bg-purple-700 hover:bg-purple-600 rounded-md text-sm"
               >
                 View Analysis

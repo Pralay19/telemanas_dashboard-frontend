@@ -9,7 +9,7 @@ export default function QuestionList({ onQuestionSelect }: QuestionListProps) {
   const questions = [
     {
       id: 1,
-      text: "What is the distribution of call categories across different states?",
+      text: "What is the distribution of age across different states?(Example Chart)",
       chartType: "Pie",
     },
     {
@@ -24,40 +24,40 @@ export default function QuestionList({ onQuestionSelect }: QuestionListProps) {
     },
     {
       id: 4,
-      text: "How do reopened cases distribute across different categories?",
+      text: "Transfer of calls across States?",
       chartType: "Sankey",
     },
     {
       id: 5,
-      text: "What is the geographical distribution of calls by state?",
+      text: "What is the geographical distribution of calls by state and for each state top districts?",
       chartType: "Choropleth",
     },
     // Add new questions with different chart types
     {
       id: 6,
-      text: "How do call volumes and resolution rates change over time?",
+      text: "Variation of call counts in terms of 24 hour time window?",
       chartType: "Line",
     },
-    {
-      id: 7,
-      text: "What is the distribution of call durations across different hours of the day?",
-      chartType: "Heatmap",
-    },
-    {
-      id: 8,
-      text: "How do different call metrics compare across states?",
-      chartType: "Radar",
-    },
-    {
-      id: 9,
-      text: "What is the relationship between call volume, duration, and resolution rate?",
-      chartType: "Bubble",
-    },
-    {
-      id: 10,
-      text: "How have call categories evolved over the past months?",
-      chartType: "Area",
-    },
+    // {
+    //   id: 7,
+    //   text: "What is the distribution of call durations across different hours of the day?(Example Chart)",
+    //   chartType: "Heatmap",
+    // },
+    // {
+    //   id: 8,
+    //   text: "How do different call metrics compare across states?(Example Chart)",
+    //   chartType: "Radar",
+    // },
+    // {
+    //   id: 9,
+    //   text: "What is the relationship between call volume, duration, and resolution rate?(Example Chart)",
+    //   chartType: "Bubble",
+    // },
+    // {
+    //   id: 10,
+    //   text: "How have call categories evolved over the past months?(Example Chart)",
+    //   chartType: "Area",
+    // },
     {
       id: 11,
       text: "Self/care-takers/Health Care Workers calls, looking at trends against gender and age",
