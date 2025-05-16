@@ -73,17 +73,20 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
       setLoading(true)
       try {
         // Fetch country data for the question
+        if(questionId !== 14){
         const countryResult = await fetchQuestionCountryData(questionId)
-        setCountryData(countryResult)
+        setCountryData(countryResult)}
 
         // Fetch state data for the question
+        if(questionId !== 9){
         const stateResult = await fetchQuestionStateData(questionId, selectedState)
         setStateData(stateResult)
-
+        
         // Update states list if available in the data
         if (stateResult && stateResult.states) {
           setStates(stateResult.states)
         }
+      }
       } catch (error) {
         console.error(`Error loading data for question ${questionId}:`, error)
       } finally {
@@ -323,7 +326,11 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
         const stateY = stateValues.map((value: number) => Math.ceil(value / 10) * 10)
         // console.log("State Y values:", stateY)
         const maxY = Math.max(...stateY);
-        const top = Math.ceil(maxY/10)*10;
+        const top = Math.ceil(maxY / 10) * 10;
+
+        // Dynamically calculate dtick: divide maxY by desired number of ticks (e.g., 5 or 6)
+        const desiredTicks = 6;
+        const dt = Math.ceil(top / desiredTicks / 10) * 10;
         return {
           data: [
             {
@@ -359,7 +366,7 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
               title: "Call Volume",
               tickmode: "linear",
               tick0: 0,
-              dtick: 10,
+              dtick: dt,
               minor: {
                 showgrid: false,   // no minor‐gridlines
                 showticklabels: false  // no minor tick labels
@@ -426,50 +433,51 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
           },
         }
 
-      case 4: // Sankey diagram for reopened cases
-      if (isCountry) {
-        return {
-          data: [
-            {
-              type: "sankey",
-              orientation: "h",
-              node: {
-                pad: 15,
-                thickness: 20,
-                line: {
-                  color: "black",
-                  width: 0.5,
-                },
-                label: data.nodes,
-                color: data.nodeColors || ["#6366f1", "#8b5cf6", "#ec4899", "#f43f5e", "#10b981"],
-              },
-              link: {
-                source: data.source,
-                target: data.target,
-                value: data.value,
-                color: data.linkColors || "rgba(99, 102, 241, 0.4)",
-              },
-            },
-          ],
-          layout: {
-            title: title,
-            autosize: true,
-            margin: { l: 0, r: 0, t: 40, b: 0 },
-            paper_bgcolor: "rgba(0,0,0,0)",
-            plot_bgcolor: "rgba(0,0,0,0)",
-            font: { color: "#e5e7eb" },
-            legend: {
-              bgcolor: "rgba(26, 34, 51, 0.7)",
-              bordercolor: "#4b5563",
-              borderwidth: 1,
-              font: { color: "#e5e7eb" },
-            },
-          },
-        }
-      } 
+      // case 4: // Sankey diagram for reopened cases
+      // if (isCountry) {
+      //   return {
+      //     data: [
+      //       {
+      //         type: "sankey",
+      //         orientation: "h",
+      //         node: {
+      //           pad: 15,
+      //           thickness: 20,
+      //           line: {
+      //             color: "black",
+      //             width: 0.5,
+      //           },
+      //           label: data.nodes,
+      //           color: data.nodeColors || ["#6366f1", "#8b5cf6", "#ec4899", "#f43f5e", "#10b981"],
+      //         },
+      //         link: {
+      //           source: data.source,
+      //           target: data.target,
+      //           value: data.value,
+      //           color: data.linkColors || "rgba(99, 102, 241, 0.4)",
+      //         },
+      //       },
+      //     ],
+      //     layout: {
+      //       title: title,
+      //       autosize: true,
+      //       margin: { l: 0, r: 0, t: 40, b: 0 },
+      //       paper_bgcolor: "rgba(0,0,0,0)",
+      //       plot_bgcolor: "rgba(0,0,0,0)",
+      //       font: { color: "#e5e7eb" },
+      //       legend: {
+      //         bgcolor: "rgba(26, 34, 51, 0.7)",
+      //         bordercolor: "#4b5563",
+      //         borderwidth: 1,
+      //         font: { color: "#e5e7eb" },
+      //       },
+      //     },
+      //   }
+      // } 
       
 
-      case 5: // Choropleth map for India
+      case 6: // Choropleth map for India
+      if(selectedState === "India"){return null}
       if (isCountry) {
         return {
           data: [
@@ -484,7 +492,7 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
               colorscale: "hot",// Use a different colorscale
               colorbar: {
                 title: "Complaint Volume",
-                thickness: 20,
+                thickness: 20,  
                 outlinewidth: 0,
                 bordercolor: "#4b5563",
                 tickfont: { color: "#e5e7eb" },
@@ -523,8 +531,11 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
         const stateIndex = data.states.findIndex(
           (state) => state.toLowerCase() === selectedState.toLowerCase()
         );
-      
+        
         // Get the 5 districts and values for that state
+        if (stateIndex === -1) {
+          console.warn(`State "${selectedState}" not found in data.states`);
+        }
         const districtLabels = data.labels[stateIndex];
         const districtValues = data.values[stateIndex];
       
@@ -565,7 +576,7 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
       }
 
       // Add new chart types
-      case 6: // Line chart for call volumes and resolution rates over time
+      case 2: // Line chart for call volumes and resolution rates over time
       
       if (isCountry) {
         return {
@@ -687,306 +698,306 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
       }
       }
 
-      case 7: // Heatmap for call durations across hours
-        return {
-          data: [
-            {
-              z: data.z,
-              x: data.x,
-              y: data.y,
-              type: "heatmap",
-              colorscale: [
-                [0, "#1a2233"],
-                [0.2, "#374151"],
-                [0.4, "#6366f1"],
-                [0.6, "#8b5cf6"],
-                [0.8, "#ec4899"],
-                [1, "#f43f5e"],
-              ],
-              showscale: true,
-              colorbar: {
-                title: "Call Duration (min)",
-                thickness: 20,
-                outlinewidth: 0,
-                bordercolor: "#4b5563",
-                tickfont: { color: "#e5e7eb" },
-                titlefont: { color: "#e5e7eb" },
-              },
-            },
-          ],
-          layout: {
-            title: title,
-            autosize: true,
-            margin: { l: 50, r: 50, t: 40, b: 40 },
-            paper_bgcolor: "rgba(0,0,0,0)",
-            plot_bgcolor: "rgba(0,0,0,0)",
-            font: { color: "#e5e7eb" },
-            xaxis: {
-              title: "Time of Day",
-              gridcolor: "#1f2937",
-            },
-            yaxis: {
-              title: "Day of Week",
-              gridcolor: "#1f2937",
-            },
-            showlegend: false,
-          },
-        }
+      // case 7: // Heatmap for call durations across hours
+      //   return {
+      //     data: [
+      //       {
+      //         z: data.z,
+      //         x: data.x,
+      //         y: data.y,
+      //         type: "heatmap",
+      //         colorscale: [
+      //           [0, "#1a2233"],
+      //           [0.2, "#374151"],
+      //           [0.4, "#6366f1"],
+      //           [0.6, "#8b5cf6"],
+      //           [0.8, "#ec4899"],
+      //           [1, "#f43f5e"],
+      //         ],
+      //         showscale: true,
+      //         colorbar: {
+      //           title: "Call Duration (min)",
+      //           thickness: 20,
+      //           outlinewidth: 0,
+      //           bordercolor: "#4b5563",
+      //           tickfont: { color: "#e5e7eb" },
+      //           titlefont: { color: "#e5e7eb" },
+      //         },
+      //       },
+      //     ],
+      //     layout: {
+      //       title: title,
+      //       autosize: true,
+      //       margin: { l: 50, r: 50, t: 40, b: 40 },
+      //       paper_bgcolor: "rgba(0,0,0,0)",
+      //       plot_bgcolor: "rgba(0,0,0,0)",
+      //       font: { color: "#e5e7eb" },
+      //       xaxis: {
+      //         title: "Time of Day",
+      //         gridcolor: "#1f2937",
+      //       },
+      //       yaxis: {
+      //         title: "Day of Week",
+      //         gridcolor: "#1f2937",
+      //       },
+      //       showlegend: false,
+      //     },
+      //   }
 
-      case 8: // Radar chart for state comparison
-        return {
-          data: isCountry
-            ? data.states.map((state: string, index: number) => ({
-                type: "scatterpolar",
-                r: data.values[index],
-                theta: data.categories,
-                fill: "toself",
-                name: state,
-                line: {
-                  color: ["#6366f1", "#8b5cf6", "#ec4899"][index % 3],
-                },
-              }))
-            : data.regions.map((region: string, index: number) => ({
-                type: "scatterpolar",
-                r: data.values[index],
-                theta: data.categories,
-                fill: "toself",
-                name: region,
-                line: {
-                  color: ["#6366f1", "#8b5cf6", "#ec4899", "#10b981"][index % 4],
-                },
-              })),
-          layout: {
-            title: title,
-            autosize: true,
-            margin: { l: 40, r: 40, t: 40, b: 40 },
-            paper_bgcolor: "rgba(0,0,0,0)",
-            plot_bgcolor: "rgba(0,0,0,0)",
-            font: { color: "#e5e7eb" },
-            polar: {
-              radialaxis: {
-                visible: true,
-                range: [0, 100],
-                gridcolor: "#1f2937",
-              },
-              angularaxis: {
-                gridcolor: "#1f2937",
-              },
-              bgcolor: "rgba(0,0,0,0)",
-            },
-            showlegend: true,
-            legend: {
-              bgcolor: "rgba(26, 34, 51, 0.7)",
-              bordercolor: "#4b5563",
-              borderwidth: 1,
-              font: { color: "#e5e7eb" },
-            },
-          },
-        }
+      // case 8: // Radar chart for state comparison
+      //   return {
+      //     data: isCountry
+      //       ? data.states.map((state: string, index: number) => ({
+      //           type: "scatterpolar",
+      //           r: data.values[index],
+      //           theta: data.categories,
+      //           fill: "toself",
+      //           name: state,
+      //           line: {
+      //             color: ["#6366f1", "#8b5cf6", "#ec4899"][index % 3],
+      //           },
+      //         }))
+      //       : data.regions.map((region: string, index: number) => ({
+      //           type: "scatterpolar",
+      //           r: data.values[index],
+      //           theta: data.categories,
+      //           fill: "toself",
+      //           name: region,
+      //           line: {
+      //             color: ["#6366f1", "#8b5cf6", "#ec4899", "#10b981"][index % 4],
+      //           },
+      //         })),
+      //     layout: {
+      //       title: title,
+      //       autosize: true,
+      //       margin: { l: 40, r: 40, t: 40, b: 40 },
+      //       paper_bgcolor: "rgba(0,0,0,0)",
+      //       plot_bgcolor: "rgba(0,0,0,0)",
+      //       font: { color: "#e5e7eb" },
+      //       polar: {
+      //         radialaxis: {
+      //           visible: true,
+      //           range: [0, 100],
+      //           gridcolor: "#1f2937",
+      //         },
+      //         angularaxis: {
+      //           gridcolor: "#1f2937",
+      //         },
+      //         bgcolor: "rgba(0,0,0,0)",
+      //       },
+      //       showlegend: true,
+      //       legend: {
+      //         bgcolor: "rgba(26, 34, 51, 0.7)",
+      //         bordercolor: "#4b5563",
+      //         borderwidth: 1,
+      //         font: { color: "#e5e7eb" },
+      //       },
+      //     },
+      //   }
 
-      case 9: // Bubble chart
-        return {
-          data: [
-            {
-              x: data.x,
-              y: data.y,
-              mode: "markers",
-              marker: {
-                size: data.size,
-                sizemode: "diameter",
-                sizeref: 0.1,
-                color: data.size,
-                colorscale: "Viridis",
-                showscale: true,
-                colorbar: {
-                  title: "Resolution Rate (%)",
-                  thickness: 20,
-                  outlinewidth: 0,
-                  bordercolor: "#4b5563",
-                  tickfont: { color: "#e5e7eb" },
-                  titlefont: { color: "#e5e7eb" },
-                },
-              },
-              text: data.text,
-              hovertemplate:
-                "<b>%{text}</b><br>Call Volume: %{x}<br>Avg Duration: %{y} min<br>Resolution Rate: %{marker.size}%",
-            },
-          ],
-          layout: {
-            title: title,
-            autosize: true,
-            margin: { l: 50, r: 50, t: 40, b: 40 },
-            paper_bgcolor: "rgba(0,0,0,0)",
-            plot_bgcolor: "rgba(0,0,0,0)",
-            font: { color: "#e5e7eb" },
-            xaxis: {
-              title: "Call Volume",
-              gridcolor: "#1f2937",
-              zerolinecolor: "#1f2937",
-            },
-            yaxis: {
-              title: "Average Call Duration (minutes)",
-              gridcolor: "#1f2937",
-              zerolinecolor: "#1f2937",
-            },
-            showlegend: false,
-          },
-        }
+      // case 4: // Bubble chart
+      //   return {
+      //     data: [
+      //       {
+      //         x: data.x,
+      //         y: data.y,
+      //         mode: "markers",
+      //         marker: {
+      //           size: data.size,
+      //           sizemode: "diameter",
+      //           sizeref: 0.1,
+      //           color: data.size,
+      //           colorscale: "Viridis",
+      //           showscale: true,
+      //           colorbar: {
+      //             title: "Resolution Rate (%)",
+      //             thickness: 20,
+      //             outlinewidth: 0,
+      //             bordercolor: "#4b5563",
+      //             tickfont: { color: "#e5e7eb" },
+      //             titlefont: { color: "#e5e7eb" },
+      //           },
+      //         },
+      //         text: data.text,
+      //         hovertemplate:
+      //           "<b>%{text}</b><br>Call Volume: %{x}<br>Avg Duration: %{y} min<br>Resolution Rate: %{marker.size}%",
+      //       },
+      //     ],
+      //     layout: {
+      //       title: title,
+      //       autosize: true,
+      //       margin: { l: 50, r: 50, t: 40, b: 40 },
+      //       paper_bgcolor: "rgba(0,0,0,0)",
+      //       plot_bgcolor: "rgba(0,0,0,0)",
+      //       font: { color: "#e5e7eb" },
+      //       xaxis: {
+      //         title: "Call Volume",
+      //         gridcolor: "#1f2937",
+      //         zerolinecolor: "#1f2937",
+      //       },
+      //       yaxis: {
+      //         title: "Average Call Duration (minutes)",
+      //         gridcolor: "#1f2937",
+      //         zerolinecolor: "#1f2937",
+      //       },
+      //       showlegend: false,
+      //     },
+      //   }
 
-      case 10: // Area chart
-      if (isCountry) {
-        return {
-          data: [
-            {
-              x: data.x,
-              y: data.anxiety,
-              type: "scatter",
-              mode: "lines",
-              name: "Anxiety",
-              stackgroup: "one",
-              fillcolor: "rgba(99, 102, 241, 0.6)",
-              line: { color: "#6366f1", width: 1 },
-            },
-            {
-              x: data.x,
-              y: data.depression,
-              type: "scatter",
-              mode: "lines",
-              name: "Depression",
-              stackgroup: "one",
-              fillcolor: "rgba(139, 92, 246, 0.6)",
-              line: { color: "#8b5cf6", width: 1 },
-            },
-            {
-              x: data.x,
-              y: data.stress,
-              type: "scatter",
-              mode: "lines",
-              name: "Stress",
-              stackgroup: "one",
-              fillcolor: "rgba(236, 72, 153, 0.6)",
-              line: { color: "#ec4899", width: 1 },
-            },
-            {
-              x: data.x,
-              y: data.other,
-              type: "scatter",
-              mode: "lines",
-              name: "Other",
-              stackgroup: "one",
-              fillcolor: "rgba(244, 63, 94, 0.6)",
-              line: { color: "#f43f5e", width: 1 },
-            },
-          ],
-          layout: {
-            title: title,
-            autosize: true,
-            margin: { l: 50, r: 20, t: 40, b: 40 },
-            paper_bgcolor: "rgba(0,0,0,0)",
-            plot_bgcolor: "rgba(0,0,0,0)",
-            font: { color: "#e5e7eb" },
-            xaxis: {
-              title: "Month",
-              gridcolor: "#1f2937",
-              zerolinecolor: "#1f2937",
-            },
-            yaxis: {
-              title: "Number of Calls",
-              gridcolor: "#1f2937",
-              zerolinecolor: "#1f2937",
-            },
-            showlegend: true,
-            legend: {
-              bgcolor: "rgba(26, 34, 51, 0.7)",
-              bordercolor: "#4b5563",
-              borderwidth: 1,
-              font: { color: "#e5e7eb" },
-            },
-          },
-        }
-      } else {
-        // For state data, find the selected state in the states array
-        const stateIndex = data.states
-          ? data.states.findIndex((state: string) => state.toLowerCase() === selectedState.toLowerCase())
-          : -1
+      // case 10: // Area chart
+      // if (isCountry) {
+      //   return {
+      //     data: [
+      //       {
+      //         x: data.x,
+      //         y: data.anxiety,
+      //         type: "scatter",
+      //         mode: "lines",
+      //         name: "Anxiety",
+      //         stackgroup: "one",
+      //         fillcolor: "rgba(99, 102, 241, 0.6)",
+      //         line: { color: "#6366f1", width: 1 },
+      //       },
+      //       {
+      //         x: data.x,
+      //         y: data.depression,
+      //         type: "scatter",
+      //         mode: "lines",
+      //         name: "Depression",
+      //         stackgroup: "one",
+      //         fillcolor: "rgba(139, 92, 246, 0.6)",
+      //         line: { color: "#8b5cf6", width: 1 },
+      //       },
+      //       {
+      //         x: data.x,
+      //         y: data.stress,
+      //         type: "scatter",
+      //         mode: "lines",
+      //         name: "Stress",
+      //         stackgroup: "one",
+      //         fillcolor: "rgba(236, 72, 153, 0.6)",
+      //         line: { color: "#ec4899", width: 1 },
+      //       },
+      //       {
+      //         x: data.x,
+      //         y: data.other,
+      //         type: "scatter",
+      //         mode: "lines",
+      //         name: "Other",
+      //         stackgroup: "one",
+      //         fillcolor: "rgba(244, 63, 94, 0.6)",
+      //         line: { color: "#f43f5e", width: 1 },
+      //       },
+      //     ],
+      //     layout: {
+      //       title: title,
+      //       autosize: true,
+      //       margin: { l: 50, r: 20, t: 40, b: 40 },
+      //       paper_bgcolor: "rgba(0,0,0,0)",
+      //       plot_bgcolor: "rgba(0,0,0,0)",
+      //       font: { color: "#e5e7eb" },
+      //       xaxis: {
+      //         title: "Month",
+      //         gridcolor: "#1f2937",
+      //         zerolinecolor: "#1f2937",
+      //       },
+      //       yaxis: {
+      //         title: "Number of Calls",
+      //         gridcolor: "#1f2937",
+      //         zerolinecolor: "#1f2937",
+      //       },
+      //       showlegend: true,
+      //       legend: {
+      //         bgcolor: "rgba(26, 34, 51, 0.7)",
+      //         bordercolor: "#4b5563",
+      //         borderwidth: 1,
+      //         font: { color: "#e5e7eb" },
+      //       },
+      //     },
+      //   }
+      // } else {
+      //   // For state data, find the selected state in the states array
+      //   const stateIndex = data.states
+      //     ? data.states.findIndex((state: string) => state.toLowerCase() === selectedState.toLowerCase())
+      //     : -1
 
-        // If state is found, use its values, otherwise use the data as is
-        const stateAnxiety = stateIndex !== -1 && data.anxiety_values ? data.anxiety_values[stateIndex] : data.anxiety
-        const stateDepression =
-          stateIndex !== -1 && data.depression_values ? data.depression_values[stateIndex] : data.depression
-        const stateStress = stateIndex !== -1 && data.stress_values ? data.stress_values[stateIndex] : data.stress
-        const stateOther = stateIndex !== -1 && data.other_values ? data.other_values[stateIndex] : data.other
+      //   // If state is found, use its values, otherwise use the data as is
+      //   const stateAnxiety = stateIndex !== -1 && data.anxiety_values ? data.anxiety_values[stateIndex] : data.anxiety
+      //   const stateDepression =
+      //     stateIndex !== -1 && data.depression_values ? data.depression_values[stateIndex] : data.depression
+      //   const stateStress = stateIndex !== -1 && data.stress_values ? data.stress_values[stateIndex] : data.stress
+      //   const stateOther = stateIndex !== -1 && data.other_values ? data.other_values[stateIndex] : data.other
 
-        return {
-          data: [
-            {
-              x: data.x,
-              y: stateAnxiety,
-              type: "scatter",
-              mode: "lines",
-              name: "Anxiety",
-              stackgroup: "one",
-              fillcolor: "rgba(99, 102, 241, 0.6)",
-              line: { color: "#6366f1", width: 1 },
-            },
-            {
-              x: data.x,
-              y: stateDepression,
-              type: "scatter",
-              mode: "lines",
-              name: "Depression",
-              stackgroup: "one",
-              fillcolor: "rgba(139, 92, 246, 0.6)",
-              line: { color: "#8b5cf6", width: 1 },
-            },
-            {
-              x: data.x,
-              y: stateStress,
-              type: "scatter",
-              mode: "lines",
-              name: "Stress",
-              stackgroup: "one",
-              fillcolor: "rgba(236, 72, 153, 0.6)",
-              line: { color: "#ec4899", width: 1 },
-            },
-            {
-              x: data.x,
-              y: stateOther,
-              type: "scatter",
-              mode: "lines",
-              name: "Other",
-              stackgroup: "one",
-              fillcolor: "rgba(244, 63, 94, 0.6)",
-              line: { color: "#f43f5e", width: 1 },
-            },
-          ],
-          layout: {
-            title: title,
-            autosize: true,
-            margin: { l: 50, r: 20, t: 40, b: 40 },
-            paper_bgcolor: "rgba(0,0,0,0)",
-            plot_bgcolor: "rgba(0,0,0,0)",
-            font: { color: "#e5e7eb" },
-            xaxis: {
-              title: "Month",
-              gridcolor: "#1f2937",
-              zerolinecolor: "#1f2937",
-            },
-            yaxis: {
-              title: "Number of Calls",
-              gridcolor: "#1f2937",
-              zerolinecolor: "#1f2937",
-            },
-            showlegend: true,
-            legend: {
-              bgcolor: "rgba(26, 34, 51, 0.7)",
-              bordercolor: "#4b5563",
-              borderwidth: 1,
-              font: { color: "#e5e7eb" },
-            },
-          },
-        }
-      }
+      //   return {
+      //     data: [
+      //       {
+      //         x: data.x,
+      //         y: stateAnxiety,
+      //         type: "scatter",
+      //         mode: "lines",
+      //         name: "Anxiety",
+      //         stackgroup: "one",
+      //         fillcolor: "rgba(99, 102, 241, 0.6)",
+      //         line: { color: "#6366f1", width: 1 },
+      //       },
+      //       {
+      //         x: data.x,
+      //         y: stateDepression,
+      //         type: "scatter",
+      //         mode: "lines",
+      //         name: "Depression",
+      //         stackgroup: "one",
+      //         fillcolor: "rgba(139, 92, 246, 0.6)",
+      //         line: { color: "#8b5cf6", width: 1 },
+      //       },
+      //       {
+      //         x: data.x,
+      //         y: stateStress,
+      //         type: "scatter",
+      //         mode: "lines",
+      //         name: "Stress",
+      //         stackgroup: "one",
+      //         fillcolor: "rgba(236, 72, 153, 0.6)",
+      //         line: { color: "#ec4899", width: 1 },
+      //       },
+      //       {
+      //         x: data.x,
+      //         y: stateOther,
+      //         type: "scatter",
+      //         mode: "lines",
+      //         name: "Other",
+      //         stackgroup: "one",
+      //         fillcolor: "rgba(244, 63, 94, 0.6)",
+      //         line: { color: "#f43f5e", width: 1 },
+      //       },
+      //     ],
+      //     layout: {
+      //       title: title,
+      //       autosize: true,
+      //       margin: { l: 50, r: 20, t: 40, b: 40 },
+      //       paper_bgcolor: "rgba(0,0,0,0)",
+      //       plot_bgcolor: "rgba(0,0,0,0)",
+      //       font: { color: "#e5e7eb" },
+      //       xaxis: {
+      //         title: "Month",
+      //         gridcolor: "#1f2937",
+      //         zerolinecolor: "#1f2937",
+      //       },
+      //       yaxis: {
+      //         title: "Number of Calls",
+      //         gridcolor: "#1f2937",
+      //         zerolinecolor: "#1f2937",
+      //       },
+      //       showlegend: true,
+      //       legend: {
+      //         bgcolor: "rgba(26, 34, 51, 0.7)",
+      //         bordercolor: "#4b5563",
+      //         borderwidth: 1,
+      //         font: { color: "#e5e7eb" },
+      //       },
+      //     },
+      //   }
+      // }
       case 11: // Complex Sankey diagram
         if (isCountry) {
           return {
@@ -1353,14 +1364,56 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
       case 14: // Population pyramid chart
         // This chart doesn't have a country version, only state
         // For state data, find the selected state in the states array
-        const stateIndex = data.states
-          ? data.states.findIndex((state: string) => state.toLowerCase() === selectedState.toLowerCase())
-          : -1
+        if (!data || !data.states || !data.districts || !data.male || !data.female) {
+          console.error("Missing required data for population pyramid chart")
+          return {
+            data: [
+              {
+                y: ["No data available"],
+                x: [0],
+                type: "bar",
+                orientation: "h",
+                marker: { color: "#3b82f6" },
+              },
+            ],
+            layout: {
+              title: `${selectedState}: No data available`,
+              autosize: true,
+              paper_bgcolor: "rgba(0,0,0,0)",
+              plot_bgcolor: "rgba(0,0,0,0)",
+              font: { color: "#e5e7eb" },
+            },
+          }
+        }
+        // For state data, find the selected state in the states array
+        const stateIndex = data.states.findIndex((state: string) => state.toLowerCase() === selectedState.toLowerCase())
 
-        // If state is found, use its values, otherwise use the first state's values
-        const stateDistricts = stateIndex !== -1 && data.districts ? data.districts[stateIndex] : data.districts[0]
-        const stateMale = stateIndex !== -1 && data.male ? data.male[stateIndex] : data.male[0]
-        const stateFemale = stateIndex !== -1 && data.female ? data.female[stateIndex] : data.female[0]
+        if (stateIndex === -1) {
+          console.warn(`State "${selectedState}" not found in data.states`)
+          return {
+            data: [
+              {
+                y: ["State not found"],
+                x: [0],
+                type: "bar",
+                orientation: "h",
+                marker: { color: "#3b82f6" },
+              },
+            ],
+            layout: {
+              title: `${selectedState}: State not found in data`,
+              autosize: true,
+              paper_bgcolor: "rgba(0,0,0,0)",
+              plot_bgcolor: "rgba(0,0,0,0)",
+              font: { color: "#e5e7eb" },
+            },
+          }
+        }
+
+        // If state is found, use its values
+        const stateDistricts = data.districts[stateIndex]
+        const stateMale = data.male[stateIndex]
+        const stateFemale = data.female[stateIndex]
 
         return {
           data: [
@@ -1493,7 +1546,7 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Left pane: Country chart */}
                     {questionId !== 14 && (
-                      <div className={`bg-[#242f47] rounded-xl p-4 ${questionId === 4 ? "md:col-span-2" : ""}`}>
+                      <div className={`bg-[#242f47] rounded-xl p-4 ${questionId === 9 ? "md:col-span-2" : ""}`}>
                         <div className="h-[400px]">
                           {countryChartConfig && (
                             <Plot
@@ -1521,7 +1574,7 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
                     )}
   
                     {/* Right pane: State chart */}
-                    {questionId !==4 && questionId !== 14 && (
+                    {questionId !==9  && (
                     <div className={`bg-[#242f47] rounded-xl p-4 ${
                         questionId === 14 ? "md:col-span-2" : ""
                       }`}

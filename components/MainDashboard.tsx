@@ -97,7 +97,7 @@ export default function MainDashboard({ selectedState, onStateChange }: MainDash
 
   // Calculate percentage change (dummy calculation for demonstration)
   const percentChange = 12.5 // This would be calculated from actual data
-  const emailsVsCalls = 0.75 // This would be calculated from actual data
+  const Calls = 0.75 // This would be calculated from actual data
 
   // Prepare data for charts
   const timeseriesData = stateData.timeseries.map((item) => ({
@@ -110,8 +110,8 @@ export default function MainDashboard({ selectedState, onStateChange }: MainDash
     y: item.minutes,
   }))
 
-  const categoryLabels = Object.keys(stateData.byCategory)
-  const categoryValues = Object.values(stateData.byCategory)
+  const categoryLabels = Object.keys(stateData.triage)
+  const categoryValues = Object.values(stateData.triage)
 
   const weekdayLabels = Object.keys(stateData.byWeekday)
   const weekdayValues = Object.values(stateData.byWeekday)
@@ -127,7 +127,7 @@ export default function MainDashboard({ selectedState, onStateChange }: MainDash
   const outgoingCalls = stateData.callsByDirection.map((item) => item.outgoing)
 
   // Prepare data for call flow funnel chart
-  const { labels, values, dropoffs, dropoffPercentages } = stateData.callFlow
+  const { labels, values, dropoffs, dropoffPercentages } = stateData.callflow
 
   return (
     <div>
@@ -189,11 +189,11 @@ export default function MainDashboard({ selectedState, onStateChange }: MainDash
           </div>
         </ChartCard>
 
-        {/* Card D: Emails vs. Calls */}
-        <ChartCard title="Emails vs. Calls">
+        {/* Card D:  Calls */}
+        <ChartCard title="Calls">
           <div className="flex flex-col justify-center items-center h-full">
-            <div className="text-3xl font-bold">{emailsVsCalls.toFixed(2)}</div>
-            <div className="text-gray-300 mt-2">Email to call ratio</div>
+            <div className="text-3xl font-bold">{Calls.toFixed(2)}</div>
+            <div className="text-gray-300 mt-2">call ratio</div>
           </div>
         </ChartCard>
       </div>
@@ -237,7 +237,7 @@ export default function MainDashboard({ selectedState, onStateChange }: MainDash
         </ChartCard>
 
         {/* Card F: Area Chart of Average Call Duration */}
-        <ChartCard title="Average Call Duration">
+        <ChartCard title="Average Call Duration in Minutes">
           <div className="h-64">
             <Plot
               data={[
@@ -314,7 +314,7 @@ export default function MainDashboard({ selectedState, onStateChange }: MainDash
         </ChartCard>
 
         {/* Card H: Semi-Donut of New vs Reopened */}
-        <ChartCard title="New vs. Reopened Requests">
+        {/* <ChartCard title="New vs. Reopened Requests">
           <div className="h-64">
             <Plot
               data={[
@@ -358,7 +358,7 @@ export default function MainDashboard({ selectedState, onStateChange }: MainDash
               style={{ width: "100%", height: "100%" }}
             />
           </div>
-        </ChartCard>
+        </ChartCard> */}
 
         {/* Card I: Bar Chart of Calls per Weekday */}
         <ChartCard title="Calls per Weekday">

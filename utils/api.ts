@@ -37,7 +37,7 @@ export async function fetchCountryData() {
         Relationship: 1500,
         Other: 1000,
       },
-      newVsReopened: { new: 8000, reopened: 4500 },
+      newVsReopened: { new: 8001, reopened: 4500 },
       byWeekday: {
         Mon: 1800,
         Tue: 2000,
@@ -80,8 +80,8 @@ export async function fetchCountryData() {
 
 export async function fetchStateData() {
   try {
-    // const response = await fetch("http://localhost:8000/static/states.json")
-    const response = await fetch("/data/state_calls.json")
+    const response = await fetch("http://localhost:8001/static/states.json")
+    // const response = await fetch("/data/states.json")
     if (!response.ok) {
       throw new Error("Failed to fetch state data")
     }
@@ -295,8 +295,8 @@ export async function fetchStateData() {
 
 export async function fetchQuestionCountryData(questionId: number) {
   try {
-    // const response = await fetch(`http://localhost:8000/static/question${questionId}_country.json`)
-    const response = await fetch(`/data/question${questionId}_country.json`)
+    const response = await fetch(`http://localhost:8001/static/question${questionId}_country.json`)
+    // const response = await fetch(`/data/question${questionId}_country.json`)
     if (!response.ok) {
       throw new Error(`Failed to fetch country data for question ${questionId}`)
     }
@@ -414,45 +414,45 @@ export async function fetchQuestionCountryData(questionId: number) {
           // y2: [60, 65, 70, 75, 80, 85, 90, 85, 80, 85],
           labels: ["Call Volume", "Resolution Rate"],
         }
-      case 7: // Heatmap
-        return {
-          x: ["12am", "4am", "8am", "12pm", "4pm", "8pm"],
-          y: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-          z: [
-            [1, 2, 5, 6, 4, 3],
-            [2, 3, 6, 7, 5, 4],
-            [3, 4, 7, 8, 6, 5],
-            [2, 3, 6, 7, 5, 4],
-            [1, 2, 5, 6, 4, 3],
-            [0, 1, 3, 4, 2, 1],
-            [0, 1, 2, 3, 2, 1],
-          ],
-        }
-      case 8: // Radar chart
-        return {
-          categories: ["Call Volume", "Avg Duration", "Resolution Rate", "Customer Satisfaction", "Agent Performance"],
-          states: ["CA", "NY", "TX"],
-          values: [
-            [90, 80, 85, 75, 95], // CA
-            [85, 75, 80, 80, 90], // NY
-            [80, 85, 75, 70, 85], // TX
-          ],
-        }
-      case 9: // Bubble chart
-        return {
-          x: [800, 1200, 1600, 2000, 2400], // Call volume
-          y: [2.5, 3.0, 3.5, 4.0, 4.5], // Avg duration
-          size: [70, 80, 75, 85, 90], // Resolution rate
-          text: ["CA", "NY", "TX", "FL", "IL"],
-        }
-      case 10: // Area chart
-        return {
-          x: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-          anxiety: [400, 420, 450, 470, 490, 510],
-          depression: [300, 320, 340, 360, 380, 400],
-          stress: [200, 210, 220, 230, 240, 250],
-          other: [100, 105, 110, 115, 120, 125],
-        }
+      // case 7: // Heatmap
+      //   return {
+      //     x: ["12am", "4am", "8am", "12pm", "4pm", "8pm"],
+      //     y: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      //     z: [
+      //       [1, 2, 5, 6, 4, 3],
+      //       [2, 3, 6, 7, 5, 4],
+      //       [3, 4, 7, 8, 6, 5],
+      //       [2, 3, 6, 7, 5, 4],
+      //       [1, 2, 5, 6, 4, 3],
+      //       [0, 1, 3, 4, 2, 1],
+      //       [0, 1, 2, 3, 2, 1],
+      //     ],
+      //   }
+      // case 8: // Radar chart
+      //   return {
+      //     categories: ["Call Volume", "Avg Duration", "Resolution Rate", "Customer Satisfaction", "Agent Performance"],
+      //     states: ["CA", "NY", "TX"],
+      //     values: [
+      //       [90, 80, 85, 75, 95], // CA
+      //       [85, 75, 80, 80, 90], // NY
+      //       [80, 85, 75, 70, 85], // TX
+      //     ],
+      //   }
+      // case 9: // Bubble chart
+      //   return {
+      //     x: [800, 1200, 1600, 2000, 2400], // Call volume
+      //     y: [2.5, 3.0, 3.5, 4.0, 4.5], // Avg duration
+      //     size: [70, 80, 75, 85, 90], // Resolution rate
+      //     text: ["CA", "NY", "TX", "FL", "IL"],
+      //   }
+      // case 10: // Area chart
+      //   return {
+      //     x: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+      //     anxiety: [400, 420, 450, 470, 490, 510],
+      //     depression: [300, 320, 340, 360, 380, 400],
+      //     stress: [200, 210, 220, 230, 240, 250],
+      //     other: [100, 105, 110, 115, 120, 125],
+      //   }
         case 11: // Complex Sankey
         return {
           nodes: [
@@ -472,7 +472,7 @@ export async function fetchQuestionCountryData(questionId: number) {
           source: [0, 0, 0, 1, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7],
           target: [5, 6, 7, 5, 6, 7, 5, 7, 5, 7, 5, 7, 8, 9, 10, 8, 9, 11, 8, 9, 10],
           value: [
-            70000, 10000, 5000, 50000, 8000, 3000, 15, 4, 1200, 300, 200, 28, 90000, 25000, 5000, 15000, 2000, 1000,
+            70000, 10000, 5000, 50000, 8001, 3000, 15, 4, 1200, 300, 200, 28, 90000, 25000, 5000, 15000, 2000, 1000,
             6000, 2000, 300,
           ],
           nodeColors: [
@@ -537,8 +537,8 @@ export async function fetchQuestionCountryData(questionId: number) {
 
 export async function fetchQuestionStateData(questionId: number, state: string) {
   try {
-    // const response = await fetch(`http://localhost:8000/static/question${questionId}_state.json`)
-    const response = await fetch(`/data/question${questionId}_state.json`);
+    const response = await fetch(`http://localhost:8001/static/question${questionId}_state.json`)
+    // const response = await fetch(`/data/question${questionId}_state.json`);
     if (!response.ok) {
       throw new Error(`Failed to fetch state data for question ${questionId}`)
     }
@@ -690,102 +690,102 @@ export async function fetchQuestionStateData(questionId: number, state: string) 
           ],
           labels: ["Call Volume"],
         }
-      case 7: // Heatmap
-        return {
-          states: ["Karnataka", "Maharashtra", "Tamil Nadu"],
-          x: ["12am", "4am", "8am", "12pm", "4pm", "8pm"],
-          y: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-          z_values: [
-            [
-              [0, 1, 3, 4, 2, 1],
-              [1, 2, 4, 5, 3, 2],
-              [2, 3, 5, 6, 4, 3],
-              [1, 2, 4, 5, 3, 2],
-              [0, 1, 3, 4, 2, 1],
-              [0, 0, 2, 3, 1, 0],
-              [0, 0, 1, 2, 1, 0],
-            ],
-            [
-              [1, 2, 4, 5, 3, 2],
-              [2, 3, 5, 6, 4, 3],
-              [3, 4, 6, 7, 5, 4],
-              [2, 3, 5, 6, 4, 3],
-              [1, 2, 4, 5, 3, 2],
-              [1, 1, 3, 4, 2, 1],
-              [1, 1, 2, 3, 2, 1],
-            ],
-            [
-              [0, 1, 2, 3, 1, 0],
-              [1, 2, 3, 4, 2, 1],
-              [2, 3, 4, 5, 3, 2],
-              [1, 2, 3, 4, 2, 1],
-              [0, 1, 2, 3, 1, 0],
-              [0, 0, 1, 2, 0, 0],
-              [0, 0, 0, 1, 0, 0],
-            ],
-          ],
-        }
-      case 8: // Radar chart
-        return {
-          state: "Karnataka",
-          categories: ["Call Volume", "Avg Duration", "Resolution Rate", "Customer Satisfaction", "Agent Performance"],
-          regions: ["North", "South", "East", "West"],
-          values: [
-            [90, 80, 85, 75, 95], // North
-            [85, 75, 80, 80, 90], // South
-            [80, 85, 75, 70, 85], // East
-            [75, 70, 85, 90, 80], // West
-          ],
-        }
-      case 9: // Bubble chart
-        return {
-          states: ["Karnataka", "Maharashtra", "Tamil Nadu"],
-          x_values: [
-            [200, 300, 400, 500, 600], // Karnataka
-            [250, 350, 450, 550, 650], // Maharashtra
-            [150, 250, 350, 450, 550], // Tamil Nadu
-          ],
-          y_values: [
-            [2.0, 2.5, 3.0, 3.5, 4.0], // Karnataka
-            [2.2, 2.7, 3.2, 3.7, 4.2], // Maharashtra
-            [1.8, 2.3, 2.8, 3.3, 3.8], // Tamil Nadu
-          ],
-          size_values: [
-            [65, 75, 70, 80, 85], // Karnataka
-            [70, 80, 75, 85, 90], // Maharashtra
-            [60, 70, 65, 75, 80], // Tamil Nadu
-          ],
-          text_values: [
-            ["North", "South", "East", "West", "Central"], // Karnataka
-            ["Mumbai", "Pune", "Nagpur", "Thane", "Nashik"], // Maharashtra
-            ["Chennai", "Coimbatore", "Madurai", "Tiruchirappalli", "Salem"], // Tamil Nadu
-          ],
-        }
-      case 10: // Area chart
-        return {
-          states: ["Karnataka", "Maharashtra", "Tamil Nadu"],
-          x: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-          anxiety_values: [
-            [120, 130, 140, 150, 160, 170], // Karnataka
-            [140, 150, 160, 170, 180, 190], // Maharashtra
-            [100, 110, 120, 130, 140, 150], // Tamil Nadu
-          ],
-          depression_values: [
-            [90, 95, 100, 105, 110, 115], // Karnataka
-            [100, 105, 110, 115, 120, 125], // Maharashtra
-            [80, 85, 90, 95, 100, 105], // Tamil Nadu
-          ],
-          stress_values: [
-            [60, 65, 70, 75, 80, 85], // Karnataka
-            [70, 75, 80, 85, 90, 95], // Maharashtra
-            [50, 55, 60, 65, 70, 75], // Tamil Nadu
-          ],
-          other_values: [
-            [30, 32, 34, 36, 38, 40], // Karnataka
-            [35, 37, 39, 41, 43, 45], // Maharashtra
-            [25, 27, 29, 31, 33, 35], // Tamil Nadu
-          ],
-        }
+      // case 7: // Heatmap
+      //   return {
+      //     states: ["Karnataka", "Maharashtra", "Tamil Nadu"],
+      //     x: ["12am", "4am", "8am", "12pm", "4pm", "8pm"],
+      //     y: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      //     z_values: [
+      //       [
+      //         [0, 1, 3, 4, 2, 1],
+      //         [1, 2, 4, 5, 3, 2],
+      //         [2, 3, 5, 6, 4, 3],
+      //         [1, 2, 4, 5, 3, 2],
+      //         [0, 1, 3, 4, 2, 1],
+      //         [0, 0, 2, 3, 1, 0],
+      //         [0, 0, 1, 2, 1, 0],
+      //       ],
+      //       [
+      //         [1, 2, 4, 5, 3, 2],
+      //         [2, 3, 5, 6, 4, 3],
+      //         [3, 4, 6, 7, 5, 4],
+      //         [2, 3, 5, 6, 4, 3],
+      //         [1, 2, 4, 5, 3, 2],
+      //         [1, 1, 3, 4, 2, 1],
+      //         [1, 1, 2, 3, 2, 1],
+      //       ],
+      //       [
+      //         [0, 1, 2, 3, 1, 0],
+      //         [1, 2, 3, 4, 2, 1],
+      //         [2, 3, 4, 5, 3, 2],
+      //         [1, 2, 3, 4, 2, 1],
+      //         [0, 1, 2, 3, 1, 0],
+      //         [0, 0, 1, 2, 0, 0],
+      //         [0, 0, 0, 1, 0, 0],
+      //       ],
+      //     ],
+      //   }
+      // case 8: // Radar chart
+      //   return {
+      //     state: "Karnataka",
+      //     categories: ["Call Volume", "Avg Duration", "Resolution Rate", "Customer Satisfaction", "Agent Performance"],
+      //     regions: ["North", "South", "East", "West"],
+      //     values: [
+      //       [90, 80, 85, 75, 95], // North
+      //       [85, 75, 80, 80, 90], // South
+      //       [80, 85, 75, 70, 85], // East
+      //       [75, 70, 85, 90, 80], // West
+      //     ],
+      //   }
+      // case 9: // Bubble chart
+      //   return {
+      //     states: ["Karnataka", "Maharashtra", "Tamil Nadu"],
+      //     x_values: [
+      //       [200, 300, 400, 500, 600], // Karnataka
+      //       [250, 350, 450, 550, 650], // Maharashtra
+      //       [150, 250, 350, 450, 550], // Tamil Nadu
+      //     ],
+      //     y_values: [
+      //       [2.0, 2.5, 3.0, 3.5, 4.0], // Karnataka
+      //       [2.2, 2.7, 3.2, 3.7, 4.2], // Maharashtra
+      //       [1.8, 2.3, 2.8, 3.3, 3.8], // Tamil Nadu
+      //     ],
+      //     size_values: [
+      //       [65, 75, 70, 80, 85], // Karnataka
+      //       [70, 80, 75, 85, 90], // Maharashtra
+      //       [60, 70, 65, 75, 80], // Tamil Nadu
+      //     ],
+      //     text_values: [
+      //       ["North", "South", "East", "West", "Central"], // Karnataka
+      //       ["Mumbai", "Pune", "Nagpur", "Thane", "Nashik"], // Maharashtra
+      //       ["Chennai", "Coimbatore", "Madurai", "Tiruchirappalli", "Salem"], // Tamil Nadu
+      //     ],
+      //   }
+      // case 10: // Area chart
+      //   return {
+      //     states: ["Karnataka", "Maharashtra", "Tamil Nadu"],
+      //     x: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+      //     anxiety_values: [
+      //       [120, 130, 140, 150, 160, 170], // Karnataka
+      //       [140, 150, 160, 170, 180, 190], // Maharashtra
+      //       [100, 110, 120, 130, 140, 150], // Tamil Nadu
+      //     ],
+      //     depression_values: [
+      //       [90, 95, 100, 105, 110, 115], // Karnataka
+      //       [100, 105, 110, 115, 120, 125], // Maharashtra
+      //       [80, 85, 90, 95, 100, 105], // Tamil Nadu
+      //     ],
+      //     stress_values: [
+      //       [60, 65, 70, 75, 80, 85], // Karnataka
+      //       [70, 75, 80, 85, 90, 95], // Maharashtra
+      //       [50, 55, 60, 65, 70, 75], // Tamil Nadu
+      //     ],
+      //     other_values: [
+      //       [30, 32, 34, 36, 38, 40], // Karnataka
+      //       [35, 37, 39, 41, 43, 45], // Maharashtra
+      //       [25, 27, 29, 31, 33, 35], // Tamil Nadu
+      //     ],
+      //   }
       //   case 11: // Complex Sankey
       //   return {
       //     nodes: [
@@ -805,7 +805,7 @@ export async function fetchQuestionStateData(questionId: number, state: string) 
       //     source: [0, 0, 0, 1, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7],
       //     target: [5, 6, 7, 5, 6, 7, 5, 7, 5, 7, 5, 7, 8, 9, 10, 8, 9, 11, 8, 9, 10],
       //     value: [
-      //       70000, 10000, 5000, 50000, 8000, 3000, 15, 4, 1200, 300, 200, 28, 90000, 25000, 5000, 15000, 2000, 1000,
+      //       70000, 10000, 5000, 50000, 8001, 3000, 15, 4, 1200, 300, 200, 28, 90000, 25000, 5000, 15000, 2000, 1000,
       //       6000, 2000, 300,
       //     ],
       //     nodeColors: [
@@ -891,7 +891,7 @@ export async function fetchQuestionStateData(questionId: number, state: string) 
           ],
           values: [
             [
-              25000, 4000, 2000, 18000, 3000, 1000, 5, 2, 400, 100, 70, 10, 30000, 8000, 1500, 5000, 700, 300, 2000,
+              25000, 4000, 2000, 18001, 3000, 1000, 5, 2, 400, 100, 70, 10, 30000, 8001, 1500, 5000, 700, 300, 2000,
               700, 100,
             ],
             [
@@ -1050,7 +1050,7 @@ export async function fetchQuestionStateData(questionId: number, state: string) 
 */
 // export async function fetchNLPResults(query: string) {
 //  try {
-//    const response = await fetch("http://localhost:8000/static/nlp.json")
+//    const response = await fetch("http://localhost:8001/static/nlp.json")
 //    if (!response.ok) {
 //     throw new Error("Failed to fetch state data")
 //   }

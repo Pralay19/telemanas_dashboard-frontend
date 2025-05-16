@@ -22,22 +22,22 @@ export default function QuestionList({ onQuestionSelect }: QuestionListProps) {
       text: "What is the number of repeated callers India vs States?",
       chartType: "",
     },
+    // {
+    //   id: 4,
+    //   text: "Transfer of calls across States?",
+    //   chartType: "Sankey",
+    // },
     {
-      id: 4,
-      text: "Transfer of calls across States?",
-      chartType: "Sankey",
-    },
-    {
-      id: 5,
+      id: 6,
       text: "What is the geographical distribution of calls by state and for each state top districts?",
       chartType: "Choropleth",
     },
     // Add new questions with different chart types
-    {
-      id: 6,
-      text: "Variation of call counts in terms of 24 hour time window?",
-      chartType: "Line",
-    },
+    // {
+    //   id: 7,
+    //   text: "Variation of call counts in terms of 24 hour time window?",
+    //   chartType: "Line",
+    // },
     // {
     //   id: 7,
     //   text: "What is the distribution of call durations across different hours of the day?(Example Chart)",
