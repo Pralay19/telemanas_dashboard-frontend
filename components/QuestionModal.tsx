@@ -12,7 +12,7 @@ import { Button } from "./ui/button";
 
 //For choropleth map
 import indiaGeoJSON from "./india.json"; 
-
+let violinWidth = 1200;
 interface QuestionModalProps {
   questionId: number
   selectedState: string
@@ -81,7 +81,7 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
         if(questionId !== 9){
         const stateResult = await fetchQuestionStateData(questionId, selectedState)
         setStateData(stateResult)
-        
+
         // Update states list if available in the data
         if (stateResult && stateResult.states) {
           setStates(stateResult.states)
@@ -1080,13 +1080,20 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
         }
 
       case 12: // Violin chart
+        
         if (isCountry) {
-          // Create violin plots for male and female data
-          const maleViolins = data.months.map((month: string, i: number) => ({
+          // Create violin plots for beg_end and middle data
+          const begEndViolins = data.months.map((month: string, i: number) => ({
             type: "violin",
             x: Array(5).fill(month),
-            y: [data.male.min[i], data.male.q1[i], data.male.median[i], data.male.q3[i], data.male.max[i]],
-            name: "Male",
+            y: [
+              data.beg_end.min[i],
+              data.beg_end.q1[i],
+              data.beg_end.median[i],
+              data.beg_end.q3[i],
+              data.beg_end.max[i],
+            ],
+            name: "Beginning/End of Month",
             box: {
               visible: true,
             },
@@ -1096,17 +1103,18 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
             meanline: {
               visible: true,
             },
-            legendgroup: "Male",
-            scalegroup: "Male",
+            legendgroup: "Beginning/End",
+            scalegroup: "Beginning/End",
             side: "negative",
             points: false,
+            showlegend: i === 0, // Show legend only for the first violin
           }))
 
-          const femaleViolins = data.months.map((month: string, i: number) => ({
+          const middleViolins = data.months.map((month: string, i: number) => ({
             type: "violin",
             x: Array(5).fill(month),
-            y: [data.female.min[i], data.female.q1[i], data.female.median[i], data.female.q3[i], data.female.max[i]],
-            name: "Female",
+            y: [data.middle.min[i], data.middle.q1[i], data.middle.median[i], data.middle.q3[i], data.middle.max[i]],
+            name: "Middle of Month",
             box: {
               visible: true,
             },
@@ -1116,37 +1124,44 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
             meanline: {
               visible: true,
             },
-            legendgroup: "Female",
-            scalegroup: "Female",
+            legendgroup: "Middle",
+            scalegroup: "Middle",
             side: "positive",
             points: false,
+            showlegend: i=== 0, // Show legend only for the first violin
           }))
 
           return {
-            data: [...maleViolins, ...femaleViolins],
+            data: [...begEndViolins, ...middleViolins],
             layout: {
-              title: "Monthly Call Volume Distribution by Gender",
+              title: "Monthly Call Volume Distribution by Time Period - National",
               autosize: true,
-              margin: { l: 50, r: 50, t: 40, b: 40 },
+              margin: { l: 60, r: 60, t: 50, b: 50 },
               paper_bgcolor: "rgba(0,0,0,0)",
               plot_bgcolor: "rgba(0,0,0,0)",
-              font: { color: "#e5e7eb" },
+              font: { color: "#e5e7eb", size: 14 },
               xaxis: {
                 title: "Month",
                 gridcolor: "#1f2937",
+                tickfont: { size: 12 },
               },
               yaxis: {
                 title: "Call Volume",
                 gridcolor: "#1f2937",
                 zerolinecolor: "#1f2937",
+                tickfont: { size: 12 },
               },
               violinmode: "overlay",
-              showlegend: false,
+              showlegend: true,
               legend: {
                 bgcolor: "rgba(26, 34, 51, 0.7)",
                 bordercolor: "#4b5563",
                 borderwidth: 1,
-                font: { color: "#e5e7eb" },
+                font: { color: "#e5e7eb", size: 12 },
+                y: 1.1,
+                x: 0.5,
+                xanchor: "center",
+                orientation: "h",
               },
             },
           }
@@ -1157,15 +1172,15 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
             : -1
 
           // If state is found, use its values, otherwise use the first state's values
-          const stateMale = stateIndex !== -1 && data.male ? data.male[stateIndex] : data.male[0]
-          const stateFemale = stateIndex !== -1 && data.female ? data.female[stateIndex] : data.female[0]
+          const stateBegEnd = stateIndex !== -1 ? data.beg_end[stateIndex] : data.beg_end[0]
+          const stateMiddle = stateIndex !== -1 ? data.middle[stateIndex] : data.middle[0]
 
-          // Create violin plots for male and female data
-          const maleViolins = data.months.map((month: string, i: number) => ({
+          // Create violin plots for beg_end and middle data
+          const begEndViolins = data.months.map((month: string, i: number) => ({
             type: "violin",
             x: Array(5).fill(month),
-            y: [stateMale.min[i], stateMale.q1[i], stateMale.median[i], stateMale.q3[i], stateMale.max[i]],
-            name: "Male",
+            y: [stateBegEnd.min[i], stateBegEnd.q1[i], stateBegEnd.median[i], stateBegEnd.q3[i], stateBegEnd.max[i]],
+            name: "Beginning/End of Month",
             box: {
               visible: true,
             },
@@ -1175,17 +1190,18 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
             meanline: {
               visible: true,
             },
-            legendgroup: "Male",
-            scalegroup: "Male",
+            legendgroup: "Beginning/End",
+            scalegroup: "Beginning/End",
             side: "negative",
             points: false,
+            showlegend: i === 0, // Show legend only for the first violin
           }))
 
-          const femaleViolins = data.months.map((month: string, i: number) => ({
+          const middleViolins = data.months.map((month: string, i: number) => ({
             type: "violin",
             x: Array(5).fill(month),
-            y: [stateFemale.min[i], stateFemale.q1[i], stateFemale.median[i], stateFemale.q3[i], stateFemale.max[i]],
-            name: "Female",
+            y: [stateMiddle.min[i], stateMiddle.q1[i], stateMiddle.median[i], stateMiddle.q3[i], stateMiddle.max[i]],
+            name: "Middle of Month",
             box: {
               visible: true,
             },
@@ -1195,37 +1211,44 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
             meanline: {
               visible: true,
             },
-            legendgroup: "Female",
-            scalegroup: "Female",
+            legendgroup: "Middle",
+            scalegroup: "Middle",
             side: "positive",
             points: false,
+            showlegend: i === 0, // Show legend only for the first violin
           }))
 
           return {
-            data: [...maleViolins, ...femaleViolins],
+            data: [...begEndViolins, ...middleViolins],
             layout: {
-              title: `${selectedState}: Monthly Call Volume Distribution by Gender`,
+              title: `${selectedState}: Monthly Call Volume Distribution by Time Period`,
               autosize: true,
-              margin: { l: 50, r: 50, t: 40, b: 40 },
+              margin: { l: 60, r: 60, t: 50, b: 50 },
               paper_bgcolor: "rgba(0,0,0,0)",
               plot_bgcolor: "rgba(0,0,0,0)",
-              font: { color: "#e5e7eb" },
+              font: { color: "#e5e7eb", size: 14 },
               xaxis: {
                 title: "Month",
                 gridcolor: "#1f2937",
+                tickfont: { size: 12 },
               },
               yaxis: {
                 title: "Call Volume",
                 gridcolor: "#1f2937",
                 zerolinecolor: "#1f2937",
+                tickfont: { size: 12 },
               },
               violinmode: "overlay",
-              showlegend: false,
+              showlegend: true,
               legend: {
                 bgcolor: "rgba(26, 34, 51, 0.7)",
                 bordercolor: "#4b5563",
                 borderwidth: 1,
-                font: { color: "#e5e7eb" },
+                font: { color: "#e5e7eb", size: 12 },
+                y: 1.1,
+                x: 0.5,
+                xanchor: "center",
+                orientation: "h",
               },
             },
           }
@@ -1507,7 +1530,7 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
   return (
     <>
       <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 overflow-y-auto">
-        <div className="bg-[#1a2233] rounded-[1.5rem] shadow-2xl w-full max-w-6xl my-8 overflow-hidden">
+        <div className="bg-[#1a2233] rounded-[1.5rem] shadow-2xl w-full max-w-6xl my-8 flex flex-col max-h-[90vh]">
           {questionId !== 3 ? (
             <>
               <div className="flex justify-between items-center p-4 border-b border-gray-800">
@@ -1517,7 +1540,7 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
                 </button>
               </div>
   
-              <div className="p-4 overflow-y-auto">
+              <div className="p-4 overflow-y-auto flex-1">
                 <div className="flex justify-end mb-4">
                   <div className="flex items-center">
                     <label htmlFor="modal-state-select" className="mr-2 text-gray-400">
@@ -1542,7 +1565,71 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
                   <div className="flex justify-center items-center h-64">
                     <div className="text-xl text-gray-400">Loading chart data...</div>
                   </div>
-                ) : (
+                ) : questionId===12 ? (// ——— Special layout for Q12 ———
+                  <div className="flex flex-col gap-8">
+                    {/* Country violin, on top */}
+                    <div className="overflow-x-auto">
+                      <div style={{ width: violinWidth, minWidth: '100%' }}>
+                        {countryChartConfig && (
+                          <Plot
+                            ref={countryChartRef}
+                            data={countryChartConfig.data}
+                            layout={{
+                              ...countryChartConfig.layout,
+                              autosize: false,
+                              width: violinWidth,
+                              height: 400
+                            }}
+                            config={{ responsive: false, displayModeBar: false }}
+                          />
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex justify-center">
+                      <button
+                        onClick={() => downloadChartAsPng(countryChartRef, "national")}
+                        disabled={downloading}
+                        className={`flex items-center gap-2 px-4 py-2 ${
+                          downloading ? "bg-gray-600" : "bg-purple-700 hover:bg-purple-600"
+                        } rounded-md text-sm`}
+                      >
+                        <Download size={16} />
+                        {downloading ? "Downloading..." : "Download Country Chart"}
+                      </button>
+                    </div>
+                
+                    {/* State violin, below with space */}
+                    <div className="overflow-x-auto">
+                      <div style={{ width: violinWidth, minWidth: '100%' }}>
+                        {stateChartConfig && (
+                          <Plot
+                            ref={stateChartRef}
+                            data={stateChartConfig.data}
+                            layout={{
+                              ...stateChartConfig.layout,
+                              autosize: false,
+                              width: violinWidth,
+                              height: 400
+                            }}
+                            config={{ responsive: false, displayModeBar: false }}
+                          />
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex justify-center">
+                      <button
+                        onClick={() => downloadChartAsPng(stateChartRef, "state")}
+                        disabled={downloading}
+                        className={`flex items-center gap-2 px-4 py-2 ${
+                          downloading ? "bg-gray-600" : "bg-purple-700 hover:bg-purple-600"
+                        } rounded-md text-sm`}
+                      >
+                        <Download size={16} />
+                        {downloading ? "Downloading..." : "Download State Chart"}
+                      </button>
+                    </div>
+                  </div>
+                  ) :(
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Left pane: Country chart */}
                     {questionId !== 14 && (
