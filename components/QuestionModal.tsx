@@ -385,53 +385,53 @@ export default function QuestionModal({ questionId, selectedState, onStateChange
         }
       }
 
-      case 3: // Scatter plot for duration vs resolution
-        return {
-          data: [
-            {
-              x: data.x,
-              y: data.y,
-              mode: "markers",
-              type: "scatter",
-              marker: {
-                color: "#6366f1",
-                size: 10,
-                opacity: 0.7,
-                line: {
-                  color: "#8b5cf6",
-                  width: 1,
-                },
-              },
-              text: data.text,
-              name: "Resolution Rate",
-            },
-          ],
-          layout: {
-            title: title,
-            autosize: true,
-            margin: { l: 40, r: 20, t: 40, b: 40 },
-            paper_bgcolor: "rgba(0,0,0,0)",
-            plot_bgcolor: "rgba(0,0,0,0)",
-            font: { color: "#e5e7eb" },
-            xaxis: {
-              gridcolor: "#1f2937",
-              zerolinecolor: "#1f2937",
-              title: "Call Duration (minutes)",
-            },
-            yaxis: {
-              gridcolor: "#1f2937",
-              zerolinecolor: "#1f2937",
-              title: "Resolution Rate (%)",
-            },
-            showlegend: true,
-            legend: {
-              bgcolor: "rgba(26, 34, 51, 0.7)",
-              bordercolor: "#4b5563",
-              borderwidth: 1,
-              font: { color: "#e5e7eb" },
-            },
-          },
-        }
+      // case 3: // Scatter plot for duration vs resolution
+      //   return {
+      //     data: [
+      //       {
+      //         x: data.x,
+      //         y: data.y,
+      //         mode: "markers",
+      //         type: "scatter",
+      //         marker: {
+      //           color: "#6366f1",
+      //           size: 10,
+      //           opacity: 0.7,
+      //           line: {
+      //             color: "#8b5cf6",
+      //             width: 1,
+      //           },
+      //         },
+      //         text: data.text,
+      //         name: "Resolution Rate",
+      //       },
+      //     ],
+      //     layout: {
+      //       title: title,
+      //       autosize: true,
+      //       margin: { l: 40, r: 20, t: 40, b: 40 },
+      //       paper_bgcolor: "rgba(0,0,0,0)",
+      //       plot_bgcolor: "rgba(0,0,0,0)",
+      //       font: { color: "#e5e7eb" },
+      //       xaxis: {
+      //         gridcolor: "#1f2937",
+      //         zerolinecolor: "#1f2937",
+      //         title: "Call Duration (minutes)",
+      //       },
+      //       yaxis: {
+      //         gridcolor: "#1f2937",
+      //         zerolinecolor: "#1f2937",
+      //         title: "Resolution Rate (%)",
+      //       },
+      //       showlegend: true,
+      //       legend: {
+      //         bgcolor: "rgba(26, 34, 51, 0.7)",
+      //         bordercolor: "#4b5563",
+      //         borderwidth: 1,
+      //         font: { color: "#e5e7eb" },
+      //       },
+      //     },
+      //   }
 
       // case 4: // Sankey diagram for reopened cases
       // if (isCountry) {

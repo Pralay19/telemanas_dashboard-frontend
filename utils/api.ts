@@ -406,7 +406,6 @@ export async function fetchQuestionCountryData(questionId: number) {
             "Lakshadweep"
           ],
         }
-      // Add new chart types
       case 6: // Line chart
         return {
           x: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"],
@@ -544,11 +543,10 @@ export async function fetchQuestionStateData(questionId: number, state: string) 
     }
     const data = await response.json()
     // console.log("Response:", data)
-    // Filter by state if the data contains multiple states
     return data.state === state ? data : data
   } catch (error) {
     console.error(`Error fetching state data for question ${questionId}:`, error)
-    // Return dummy data based on question type
+    
     switch (questionId) {
       case 1: // Pie chart
       return {
@@ -678,7 +676,6 @@ export async function fetchQuestionStateData(questionId: number, state: string) 
             "Lakshadweep"
           ],
         }
-      // Add new chart types
       case 6: // Line chart
         return {
           states: ["Karnataka", "Maharashtra", "Tamil Nadu"],

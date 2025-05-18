@@ -4,8 +4,8 @@ import { useState } from "react"
 import MainDashboard from "@/components/MainDashboard"
 import QuestionList from "@/components/QuestionList"
 import QuestionModal from "@/components/QuestionModal"
-import NLPSearch from "@/components/NLPSearch"
-import { Button } from "@/components/ui/button"
+// import NLPSearch from "@/components/NLPSearch"
+// import { Button } from "@/components/ui/button"
 
 export default function Home() {
   const [selectedQuestion, setSelectedQuestion] = useState<number | null>(null)
@@ -42,7 +42,7 @@ export default function Home() {
       <div className="mt-10">
         <h2 className="text-2xl font-bold mb-4 ">Natural Language Query</h2>
         <button className="ml-4 px-4 py-2 bg-purple-700 hover:bg-purple-600 rounded-md text-sm whitespace-nowrap"
-            onClick={() => {window.open("http://localhost:8001/", "_blank");}}
+            onClick={() => {window.open("http://localhost:8501/", "_blank");}}
               >
            Ask
         </button>

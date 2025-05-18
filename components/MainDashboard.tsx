@@ -121,12 +121,12 @@ export default function MainDashboard({ selectedState, onStateChange }: MainDash
   const ageGroupValues = Object.values(stateData.byAgeGroup)
   const ageGroupColors = ["#60a5fa", "#34d399", "#f97316", "#facc15", "#a78bfa", "#f472b6"]
 
-  // Prepare data for incoming vs outgoing calls stacked area chart
+  //  incoming vs outgoing calls stacked area chart
   const months = stateData.callsByDirection.map((item) => item.month)
   const incomingCalls = stateData.callsByDirection.map((item) => item.incoming)
   const outgoingCalls = stateData.callsByDirection.map((item) => item.outgoing)
 
-  // Prepare data for call flow funnel chart
+  // call flow funnel chart
   const { labels, values, dropoffs, dropoffPercentages } = stateData.callflow
 
   return (
