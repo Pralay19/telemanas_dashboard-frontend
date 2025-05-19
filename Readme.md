@@ -2,7 +2,7 @@
 
 This is a **Next.js** application built with **TypeScript**.
 
-> ⚠️ **Strict Requirement**:  
+>  **Strict Requirement**:  
 > You **must** use **Node.js version 22.15.0**.  
 > Using any other version may cause installation failures, runtime bugs, or incompatibility with dependencies.
 
@@ -11,7 +11,7 @@ This is a **Next.js** application built with **TypeScript**.
 - vaul
 - add ssr:true for Plotly imports
 
-## 📦 Setup Instructions
+## Setup Instructions
 
 1. **Clone the repository**
    ```bash
